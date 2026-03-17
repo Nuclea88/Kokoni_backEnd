@@ -1,0 +1,55 @@
+package com.example.kokoni.entity;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "media")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "media_type", discriminatorType = DiscriminatorType.STRING)
+@Getter @Setter
+public class Media {
+@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
+    @Column(name = "external_id")
+    private String externalId;
+
+    private String provider; // Ej: "MANGADEX"
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "release_date")
+    private LocalDate releaseDate;
+
+    // Relación con los títulos multidioma
+    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MediaTitle> titles = new ArrayList<>();
+
+    // Helper para añadir títulos fácilmente
+    public void addTitle(MediaTitle title) {
+        titles.add(title);
+        title.setMedia(this);
+    }
+}
