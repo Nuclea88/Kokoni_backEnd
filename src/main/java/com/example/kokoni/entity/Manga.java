@@ -26,6 +26,8 @@ public class Manga extends Media {
 
     @Enumerated(EnumType.STRING)
     private MediaStatus status;
+
+    private String officialUrl;
 }
 
    

@@ -1,15 +1,15 @@
-package com.example.kokoni.security;
+// package com.example.kokoni.security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@Configuration
-public class PasswordEncoderConfig {
+// @Configuration
+// public class PasswordEncoderConfig {
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+//     @Bean
+//     public BCryptPasswordEncoder bCryptPasswordEncoder(){
+//         return new BCryptPasswordEncoder();
+//     }
 
-}
+// }
