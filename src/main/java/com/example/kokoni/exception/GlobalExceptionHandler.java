@@ -1,19 +1,22 @@
 package com.example.kokoni.exception;
 
-// import java.time.LocalDateTime;
-// import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.MethodArgumentNotValidException;
-// import org.springframework.web.bind.annotation.ControllerAdvice;
-// import org.springframework.web.bind.annotation.ExceptionHandler;
-// import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-// import com.swapp.swapp.dto.ErrorInfo;
+import com.example.kokoni.dto.ErrorInfo;
 
-// @ControllerAdvice
-// public class GlobalExceptionHandler {
+import jakarta.persistence.EntityNotFoundException;
+
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
 
 //     @ExceptionHandler(UnauthorizedException.class)
 //     public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthorizedException ex) {
@@ -43,9 +46,15 @@ package com.example.kokoni.exception;
 //     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 //     }
 
-//     @ExceptionHandler(RuntimeException.class)
-//     public ResponseEntity<ErrorInfo> generalError(RuntimeException e) {
-//         ErrorInfo body = new ErrorInfo(500, "Internal error: " + e.getMessage());
-//         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-//     }
-// }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorInfo> generalError(RuntimeException e) {
+        ErrorInfo body = new ErrorInfo(500, "Internal error: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+     @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorInfo> EntityNotFoundError(EntityNotFoundException e) {
+        ErrorInfo body = new ErrorInfo(404, "not found: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
