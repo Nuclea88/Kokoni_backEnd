@@ -1,4 +1,4 @@
-package com.example.kokoni.dto.MangaDexResponse;
+package com.example.kokoni.dto.mangaDexResponse;
 
 import java.util.Map;
 

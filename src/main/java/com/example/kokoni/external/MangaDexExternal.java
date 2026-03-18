@@ -34,6 +34,7 @@ public class MangaDexExternal implements MangaProvider {
                 .queryParam("offset", offset)
                 .queryParam("contentRating[]", List.of("safe", "suggestive", "erotica", "pornographic"))
                 .queryParam("includes[]", "cover_art")
+                 .queryParam("includes[]", "author")
                 .build())
             .retrieve()
             .bodyToMono(MangaDexResponse.class) 

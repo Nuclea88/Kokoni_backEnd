@@ -10,9 +10,11 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-import com.example.kokoni.dto.MangaDexResponse.MangaDexDataDTO;
+import com.example.kokoni.dto.mangaDexResponse.MangaDexDataDTO;
+import com.example.kokoni.dto.mangaDexResponse.MangaRelationshipDTO;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.MediaTitle;
 
@@ -24,22 +26,23 @@ public interface MangaDexMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "externalId", source = "id")
     @Mapping(target = "provider", constant = "MANGADEX")
-    @Mapping(target = "description", source = "attributes.description")
+    @Mapping(target = "description", source = "attributes.description", qualifiedByName = "mapDescription")
     @Mapping(target = "releaseDate", source = "attributes.year")
     @Mapping(target = "status", source = "attributes.status")
-    @Mapping(target = "totalVolumes", source = "attributes.lastVolume")
-    @Mapping(target = "totalChapters", source = "attributes.lastChapter")
+    @Mapping(target = "author", source = "relationships", qualifiedByName = "extractAuthor")
+    @Mapping(target = "imageUrl", source = ".", qualifiedByName = "extractCoverUrl")
+    @Mapping(target = "totalVolumes", source = "attributes.lastVolume", qualifiedByName = "parseSafeInt")
+    @Mapping(target = "totalChapters", source = "attributes.lastChapter", qualifiedByName = "parseSafeInt")
     Manga toEntity(MangaDexDataDTO dto);
 
     @AfterMapping
-default void finalizeManga(MangaDexDataDTO dto, @MappingTarget Manga manga) {
+    default void finalizeManga(MangaDexDataDTO dto, @MappingTarget Manga manga) {
     
         mapTitles(dto, manga);
         mapLinks(dto, manga);
-        mapRelationships(dto, manga);
     }
-    
-    private void mapTitles(MangaDexDataDTO dto, Manga manga) {
+
+     default void mapTitles(MangaDexDataDTO dto, Manga manga) {
         Set<String> processedTitles = new HashSet<>();
         
         // Lógica de títulos principales
@@ -85,18 +88,32 @@ default void finalizeManga(MangaDexDataDTO dto, @MappingTarget Manga manga) {
         }
     }
 
-    private void mapRelationships(MangaDexDataDTO dto, Manga manga) {
-        dto.relationships().forEach(rel -> {
-            if ("cover_art".equals(rel.type()) && rel.attributes() != null) {
-                String fileName = (String) rel.attributes().get("fileName");
-                manga.setImageUrl("https://uploads.mangadex.org/covers/" + dto.id() + "/" + fileName + ".256.jpg");
-            }
-            if ("author".equals(rel.type()) && rel.attributes() != null) {
-                manga.setAuthor((String) rel.attributes().get("name"));
-            }
-        });
-    }
+
+    // private void mapRelationships(MangaDexDataDTO dto, Manga manga) {
+    //     dto.relationships().forEach(rel -> {
+    //         if ("cover_art".equals(rel.type()) && rel.attributes() != null) {
+    //             String fileName = (String) rel.attributes().get("fileName");
+    //             manga.setImageUrl("https://uploads.mangadex.org/covers/" + dto.id() + "/" + fileName + ".256.jpg");
+    //         }
+    //         if ("author".equals(rel.type()) && rel.attributes() != null) {
+    //             manga.setAuthor((String) rel.attributes().get("name"));
+    //         }
+    //     });
+    // }
+
+
+    // Para los capítulos, si lastChapter es String y tu Entity Integer:
+    // default Integer mapChapters(String lastChapter) {
+    //     try {
+    //         return (lastChapter != null) ? Integer.parseInt(lastChapter) : null;
+    //     } catch (NumberFormatException e) {
+    //         return null;
+    //     }
+    // }
+
 }
+
+
     
     
     
