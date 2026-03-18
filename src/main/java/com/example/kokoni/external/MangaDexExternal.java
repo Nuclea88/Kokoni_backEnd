@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.example.kokoni.dto.response.MangaDexResponse;
 import com.example.kokoni.dto.response.MangaDexSingleResponse;
 import com.example.kokoni.entity.Manga;
-import com.example.kokoni.mapper.MangaMapper;
+import com.example.kokoni.mapper.MangaDexMapper;
 import com.example.kokoni.service.MangaProvider;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -16,9 +16,9 @@ import jakarta.persistence.EntityNotFoundException;
 @Component
 public class MangaDexExternal implements MangaProvider {
    private final WebClient webClient;
-   private final MangaMapper mangaMapper;
+   private final MangaDexMapper mangaMapper;
 
-   public MangaDexExternal(WebClient webClient, MangaMapper mangaMapper){
+   public MangaDexExternal(WebClient webClient, MangaDexMapper mangaMapper){
         this.webClient = webClient;
         this.mangaMapper = mangaMapper;
    }

@@ -1,11 +1,11 @@
-package com.example.kokoni.dto;
+package com.example.kokoni.dto.MangaDexResponse;
 
 import java.util.List;
 
-public record MangaDataDTO(
+public record MangaDexDataDTO(
         String id,
         String type,
-        MangaAttributesDTO attributes,
+        MangaDexAttributesDTO attributes,
         List<MangaRelationshipDTO> relationships
     ) {}
 
