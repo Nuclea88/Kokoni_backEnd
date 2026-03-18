@@ -10,18 +10,17 @@ import com.example.kokoni.repository.MangaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class MangaServiceImpl implements MangaService{
 
     private final MangaProvider mangaProvider;
     private final MangaRepository mangaRepository;
+    private final List<MangaMetadataEnricher> enrichers;
 
-    public MangaServiceImpl(MangaProvider mangaProvider, MangaRepository mangaRepository) {
-        this.mangaProvider = mangaProvider;
-        this.mangaRepository = mangaRepository;
-    }
-
+    
     @Override
     public List<Manga> searchInApi(String query, int page) {
         return mangaProvider.searchManga(query, page);
@@ -32,21 +31,38 @@ public class MangaServiceImpl implements MangaService{
     return mangaRepository.findByExternalId(externalId);
     }
 
-    @Override
-    public Manga getMangaByExternalId(String externalId) {
-    return findMangaByExternalId(externalId)
-        .orElseThrow(() -> new EntityNotFoundException("Manga con ID externa " + externalId + " no encontrado en tu lista"));
-}
+//     @Override
+//     public Manga getMangaByExternalId(String externalId) {
+//     return findMangaByExternalId(externalId)
+//         .orElseThrow(() -> new EntityNotFoundException("Manga con ID externa " + externalId + " no encontrado en tu lista"));
+// }
 
     @Transactional
-public Manga searchAndSave(String externalId) {
+    public Manga searchAndSave(String externalId) {
     
     return findMangaByExternalId(externalId)
         .orElseGet(() -> {
-            Manga mangaFromApi = mangaProvider.searchByExternalId(externalId);
-            return mangaRepository.save(mangaFromApi);
+            Manga mangaToSave = getFullDetails(externalId);
+                return mangaRepository.save(mangaToSave);
         });
-}
+    }
+    public void enrichData(Manga manga) {
+        if (enrichers != null) {
+            enrichers.forEach(enricher -> enricher.enrich(manga));
+        }
+    }
+
+    public Manga getFullDetails(String externalId) {
+
+        return mangaRepository.findByExternalId(externalId)
+            .orElseGet(() -> {
+
+                Manga mangaFromApi = mangaProvider.searchByExternalId(externalId);
+                enrichData(mangaFromApi);
+                return mangaFromApi;
+            });
+    }
+
 }
 
 

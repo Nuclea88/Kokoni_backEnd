@@ -13,5 +13,5 @@ public interface MangaService {
 
     Manga searchAndSave(String externalId);
     
-    Manga getMangaByExternalId(String externalId);
+    // Manga getMangaByExternalId(String externalId);
 }
