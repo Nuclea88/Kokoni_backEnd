@@ -14,20 +14,24 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final CustomListServiceImpl customListService;
 
     @Override
     @Transactional
     public User registerUser(User user) {
+        System.out.println("User recibido: " + user.getUsername());
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
+        User savedUser = userRepository.save(user);
+        customListService.createDefaultList(savedUser, "Favoritos");
 
         // String encodedPassword = passwordEncoder.encode(user.getPassword());
         // user.setPassword(encodedPassword);
-        return userRepository.save(user);
+        return savedUser;
     }
 
     @Override
