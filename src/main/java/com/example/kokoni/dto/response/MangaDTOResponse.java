@@ -1,6 +1,6 @@
-package com.example.kokoni.dto;
+package com.example.kokoni.dto.response;
 
-public record MangaDTO(
+public record MangaDTOResponse(
     Long id,
     String title,
     String imageUrl,
