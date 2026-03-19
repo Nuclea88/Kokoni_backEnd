@@ -48,6 +48,7 @@ public class Media {
     // Relación con los títulos multidioma
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @Getter @Setter
     private List<MediaTitle> titles = new ArrayList<>();
 
     // Helper para añadir títulos fácilmente

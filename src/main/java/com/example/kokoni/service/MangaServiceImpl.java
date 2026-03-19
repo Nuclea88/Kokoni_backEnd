@@ -31,6 +31,12 @@ public class MangaServiceImpl implements MangaService{
     return mangaRepository.findByExternalId(externalId);
     }
 
+    @Override
+    public Manga findById(Long id){
+        return mangaRepository.findById(id)
+        .orElseThrow(()-> new EntityNotFoundException("Manga no encontrado"));
+    }
+
 //     @Override
 //     public Manga getMangaByExternalId(String externalId) {
 //     return findMangaByExternalId(externalId)

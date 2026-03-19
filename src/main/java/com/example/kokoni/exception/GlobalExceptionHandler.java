@@ -45,6 +45,11 @@ public class GlobalExceptionHandler {
 //         ErrorInfo body = new ErrorInfo(400, e.getMessage());
 //     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 //     }
+    @ExceptionHandler(TitleException.class)
+    public ResponseEntity<ErrorInfo> TitleError (TitleException e){
+        ErrorInfo body = new ErrorInfo(400, "Error en la respuesta: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorInfo> generalError(RuntimeException e) {
