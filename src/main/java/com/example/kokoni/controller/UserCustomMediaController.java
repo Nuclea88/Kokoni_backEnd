@@ -1,6 +1,5 @@
 package com.example.kokoni.controller;
 
-import com.example.kokoni.service.UserCustomMediaServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,12 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.kokoni.dto.request.UserCustomMediaDTORequest;
 import com.example.kokoni.dto.response.UserCustomMediaDTOResponse;
-import com.example.kokoni.entity.User;
-import com.example.kokoni.entity.UserCustomMedia;
-import com.example.kokoni.mapper.UserCustomMediaMapper;
 import com.example.kokoni.service.UserCustomMediaService;
-import com.example.kokoni.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,17 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class UserCustomMediaController {
 
     private final UserCustomMediaService customMediaService;
-    private final UserService userService;
-    private final UserCustomMediaMapper customMediaMapper;
 
-    @PostMapping("/user/{userId}")
+    @PostMapping
     public ResponseEntity<UserCustomMediaDTOResponse> create(
-            @PathVariable Long userId, 
-            @RequestBody UserCustomMediaDTORequest custom) {
+           @Valid @RequestBody UserCustomMediaDTORequest request) {
         
-        UserCustomMedia newCustomMedia = customMediaService.createCustom(custom, userId);
-        UserCustomMediaDTOResponse newMediaDTO = customMediaMapper.toResponse(newCustomMedia);
-        return new ResponseEntity<>(newMediaDTO, HttpStatus.CREATED);
+        UserCustomMediaDTOResponse newCustomMedia = customMediaService.createCustom(request);
+        return new ResponseEntity<>(newCustomMedia, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
@@ -50,7 +42,7 @@ public class UserCustomMediaController {
     public ResponseEntity<UserCustomMediaDTOResponse> update(
             @PathVariable Long id, 
             @RequestBody UserCustomMediaDTORequest request) {
-        return ResponseEntity.ok(customMediaMapper.toResponse(customMediaService.update(id, request)));
+        return ResponseEntity.ok(customMediaService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

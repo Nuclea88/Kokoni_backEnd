@@ -14,4 +14,6 @@ public interface UserMediaTrackerRepository extends JpaRepository<UserMediaTrack
     Optional<UserMediaTracker> findByUserIdAndMediaId(Long userId, Long mediaId);
     
     boolean existsByUserIdAndMediaId(Long userId, Long mediaId);
+
+    boolean existsByUserIdAndMediaExternalId(Long userId, String externalId);
 }

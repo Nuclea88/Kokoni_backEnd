@@ -18,81 +18,72 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserCustomMediaServiceImpl implements UserCustomMediaService{
 private final UserCustomMediaRepository repository;
 private final MangaService mangaService;
 private final UserCustomMediaMapper customMediaMapper;
-private final UserService userService;
+private final AuthService authService;
 
+    private UserCustomMedia getCustomMediaOwnedByMeOrThrow(Long id) {
+        User me = authService.getAuthenticatedUser();
+        UserCustomMedia media = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Media personalizado no encontrado"));
+            
+        if (!media.getCreator().getId().equals(me.getId())) {
+            throw new RuntimeException("Acceso denegado: No puedes modificar obras de otros usuarios.");
+        }
+        return media;
+    }
+
+    @Override
     @Transactional
-    public UserCustomMedia createCustom(UserCustomMediaDTORequest request) {
+    public UserCustomMediaDTOResponse createCustom(UserCustomMediaDTORequest request) {
        
         UserCustomMedia custom = customMediaMapper.toEntity(request);
         
-        User creator = userService.getAuthenticatedUser();
+        User creator = authService.getAuthenticatedUser();
         custom.setCreator(creator);
         custom.setProvider("USER_CUSTOM");
 
         if (request.baseMangaId() != null) {
             Manga base = mangaService.findById(request.baseMangaId());
             custom.setBaseManga(base);
+            custom.setImageUrl(request.imageUrl() != null ? request.imageUrl() : base.getImageUrl());
+            custom.setDescription(request.description() != null ? request.description() : base.getDescription());
 
-        custom.setImageUrl(request.imageUrl() != null ? request.imageUrl() : base.getImageUrl());
-        custom.setDescription(request.description() != null ? request.description() : base.getDescription());
-
-
-
-
-
-        // if (request.description() == null) custom.setDescription(base.getDescription());
-        // if (request.imageUrl() == null) custom.setImageUrl(base.getImageUrl());
-        // if ( custom.getTitles().isEmpty()) {
         for (MediaTitle baseTitle : base.getTitles()) {
             MediaTitle newTitle = new MediaTitle();
             newTitle.setTitle(baseTitle.getTitle());
             newTitle.setLanguageCode(baseTitle.getLanguageCode());
             newTitle.setIsPrimary(baseTitle.getIsPrimary());
-  
+            newTitle.setMedia(custom);
             custom.addTitle(newTitle); 
             }
-        // }
         }
         else {
-        if (custom.getTitles() == null) {
+        if (custom.getTitles() == null || request.title().isBlank()) {
             throw new TitleException("Debe tener al menos un título.");
-        
-        }
+            }
          MediaTitle newTitle = new MediaTitle();
         newTitle.setTitle(request.title());
-        newTitle.setLanguageCode("es"); // O el que prefieras por defecto
+        newTitle.setLanguageCode("es"); 
         newTitle.setIsPrimary(true);
+        newTitle.setMedia(custom);
         custom.addTitle(newTitle);
-         }
-        
-         if (custom.getTitles() != null) {
-        custom.getTitles().forEach(t -> t.setMedia(custom));
         }
-
        UserCustomMedia saved = repository.save(custom);
-        return saved;
+        return customMediaMapper.toResponse(saved);
     }
 
-    @Override
-    public UserCustomMedia findById(Long id){
-        return (repository.findById(id))
-            .orElseThrow(() -> new EntityNotFoundException("Media personalizado no encontrado"));
-    }
-
-    @Override
+     @Override
     public UserCustomMediaDTOResponse searchById(Long id) {
         return customMediaMapper.toResponse(findById(id));  
     }
 
     @Override
     @Transactional
-    public UserCustomMedia update(Long id, UserCustomMediaDTORequest request) {
-    UserCustomMedia existing = findById(id);
+    public UserCustomMediaDTOResponse update(Long id, UserCustomMediaDTORequest request) {
+    UserCustomMedia existing = getCustomMediaOwnedByMeOrThrow(id);
     
     customMediaMapper.updateEntity(request, existing);
     if (request.title() != null && !request.title().isBlank()) {
@@ -101,14 +92,21 @@ private final UserService userService;
             .findFirst()
             .ifPresent(t -> t.setTitle(request.title()));
     }
-    return repository.save(existing);
+     UserCustomMedia saved = repository.save(existing);
+        return customMediaMapper.toResponse(saved);
 }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        UserCustomMedia media = findById(id);
+        UserCustomMedia media = getCustomMediaOwnedByMeOrThrow(id);
         repository.delete(media);
+    }
+
+    @Override
+    public UserCustomMedia findById(Long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Media personalizado no encontrado"));
     }
 }
 

@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final CustomListService customListService;
     private final PasswordEncoder passwordEncoder; 
     private final UserMapper userMapper;
+    private final AuthService authService;
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
      @Override
     public UserProfileResponse getUserProfile() {
-        User user = getAuthenticatedUser();
+        User user = authService.getAuthenticatedUser();
         //  A futuro, hacer queries reales a la tabla UserChapterProgress para sumar estos números.
         // Por ahora hardcodeamos unos valores para que el Frontend ya pueda pintar la tarjeta "LV 42".
         Integer mockedLevel = 42;
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(UpdateUserRequest request) {
-        User existingUser = getAuthenticatedUser();
+        User existingUser = authService.getAuthenticatedUser();
            
         if (request.username() != null) existingUser.setUsername(request.username());
         if (request.email() != null) existingUser.setEmail(request.email());
@@ -92,18 +93,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser() {
-    User user= getAuthenticatedUser();
+    User user= authService.getAuthenticatedUser();
         userRepository.deleteById(user.getId());
     }
-
-    @Override
-    public User getAuthenticatedUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-        throw new RuntimeException("No autorizado");
-    }
-    UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-    return findById(userDetail.getUser().getId());
-}
 }
 

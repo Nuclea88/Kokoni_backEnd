@@ -23,7 +23,7 @@ public class UserChapterProgressServiceImpl implements UserChapterProgressServic
 
     private final UserChapterProgressRepository progressRepository;
     private final UserMediaTrackerService trackerService;
-    private final UserService userService; 
+    private final AuthService authService; 
     private final ChapterProgressMapper progressMapper;
 
     @Override
@@ -60,7 +60,7 @@ public class UserChapterProgressServiceImpl implements UserChapterProgressServic
     @Override
     public Integer getCurrentChapterForManga(Long mediaId) {
         try {
-            User me = userService.getAuthenticatedUser();
+            User me = authService.getAuthenticatedUser();
             Integer highest = progressRepository.findHighestChapterRead(me.getId(), mediaId);
             return highest != null ? highest : 0;
         } catch (Exception e) {
