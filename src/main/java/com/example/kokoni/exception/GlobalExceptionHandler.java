@@ -2,71 +2,61 @@ package com.example.kokoni.exception;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.kokoni.dto.ErrorInfo;
-
 import jakarta.persistence.EntityNotFoundException;
 
-
-@ControllerAdvice
+@RestControllerAdvice 
 public class GlobalExceptionHandler {
-
-//     @ExceptionHandler(UnauthorizedException.class)
-//     public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthorizedException ex) {
-//         ErrorInfo error = new ErrorInfo(401,"unauthorized: "+ ex.getMessage());
-//         return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
-//     }
     
-//     @ExceptionHandler(MethodArgumentNotValidException.class)
-//     public ResponseEntity<ErrorInfo> handleValidationErrors(MethodArgumentNotValidException e) {
-        
-//         String details = e.getBindingResult().getFieldErrors().stream()
-//                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
-//                 .collect(Collectors.joining(", "));
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorInfo> handleValidationErrors(MethodArgumentNotValidException e) {
+        String details = e.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        ErrorInfo error = new ErrorInfo(400, "Error de validación en los datos", details, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorInfo> handleEntityNotFound(EntityNotFoundException e) {
+        ErrorInfo body = new ErrorInfo(404, "No encontrado: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorInfo> handleUserNotFound(UsernameNotFoundException e) {
+        ErrorInfo body = new ErrorInfo(401, "Error de autenticación: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
 
-//         ErrorInfo error = new ErrorInfo(400, "Error in data validation", details, LocalDateTime.now());
-//         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//     }
-//     @ExceptionHandler(NoResourceFoundException.class)
-//     public ResponseEntity<ErrorInfo> notFoundError(NoResourceFoundException e) {
-//         ErrorInfo body = new ErrorInfo(404, "Not found: " + e.getMessage());
-//         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-//     }
-
-//     @ExceptionHandler(FileException.class)
-//     public ResponseEntity<ErrorInfo> fileError (FileException e){
-//         ErrorInfo body = new ErrorInfo(400, e.getMessage());
-//     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-//     }
-    @ExceptionHandler(TitleException.class)
-    public ResponseEntity<ErrorInfo> TitleError (TitleException e){
-        ErrorInfo body = new ErrorInfo(400, "Error en la respuesta: " + e.getMessage());
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorInfo> handleAccessDenied(AccessDeniedException e) {
+        ErrorInfo body = new ErrorInfo(403, "Acceso denegado: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+   
+    @ExceptionHandler({TitleException.class})
+    public ResponseEntity<ErrorInfo> handleCustomBusinessErrors(RuntimeException e) {
+        ErrorInfo body = new ErrorInfo(400, "Error: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
-
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorInfo> handleGeneralError(Exception e) {
+        ErrorInfo body = new ErrorInfo(500, "Error interno del servidor", e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorInfo> generalError(RuntimeException e) {
-        ErrorInfo body = new ErrorInfo(500, "Internal error: " + e.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorInfo> EntityNotFoundError(EntityNotFoundException e) {
-        ErrorInfo body = new ErrorInfo(404, "not found: " + e.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorInfo> UsernameNotFoundError(UsernameNotFoundException e) {
-        ErrorInfo body = new ErrorInfo(403, "bad credentials: " + e.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    public ResponseEntity<ErrorInfo> handleRuntimeError(RuntimeException e) {
+        ErrorInfo body = new ErrorInfo(400, "Operación fallida", e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

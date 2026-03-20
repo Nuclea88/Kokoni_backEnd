@@ -1,18 +1,14 @@
 package com.example.kokoni.mapper;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 import com.example.kokoni.dto.MangaDexResponse.MangaDexDataDTO;
 import com.example.kokoni.dto.MangaDexResponse.MangaRelationshipDTO;
-import com.example.kokoni.entity.Manga;
-import com.example.kokoni.entity.MediaTitle;
 import com.example.kokoni.entity.enums.MediaStatus;
 
 @Component

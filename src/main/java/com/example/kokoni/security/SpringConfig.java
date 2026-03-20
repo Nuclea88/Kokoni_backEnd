@@ -41,6 +41,7 @@ public class SpringConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/login", "/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/mangas/**").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilter(authenticationFilter)
