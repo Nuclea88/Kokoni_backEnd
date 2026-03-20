@@ -1,4 +1,4 @@
-package com.example.kokoni.dto.mangaDexResponse;
+package com.example.kokoni.dto.MangaDexResponse;
 
 public record LinksDTO(
         String al,    // AniList ID

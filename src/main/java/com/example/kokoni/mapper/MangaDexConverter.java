@@ -9,8 +9,8 @@ import java.util.Set;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
-import com.example.kokoni.dto.mangaDexResponse.MangaDexDataDTO;
-import com.example.kokoni.dto.mangaDexResponse.MangaRelationshipDTO;
+import com.example.kokoni.dto.MangaDexResponse.MangaDexDataDTO;
+import com.example.kokoni.dto.MangaDexResponse.MangaRelationshipDTO;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.MediaTitle;
 import com.example.kokoni.entity.enums.MediaStatus;

@@ -1,5 +1,7 @@
 package com.example.kokoni.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,5 +30,10 @@ public class User {
     private String email;
 
     private String password;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
 
 }

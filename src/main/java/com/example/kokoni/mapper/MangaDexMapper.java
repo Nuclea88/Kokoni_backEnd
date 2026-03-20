@@ -13,8 +13,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-import com.example.kokoni.dto.mangaDexResponse.MangaDexDataDTO;
-import com.example.kokoni.dto.mangaDexResponse.MangaRelationshipDTO;
+import com.example.kokoni.dto.MangaDexResponse.MangaDexDataDTO;
+import com.example.kokoni.dto.MangaDexResponse.MangaRelationshipDTO;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.MediaTitle;
 

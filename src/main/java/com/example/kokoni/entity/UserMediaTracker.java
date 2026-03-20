@@ -1,6 +1,7 @@
 package com.example.kokoni.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.example.kokoni.entity.enums.UserStatus;
 
@@ -15,11 +16,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_media_tracker")
+@Table(name = "user_media_tracker", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "media_id"})})
 @Getter @Setter
 public class UserMediaTracker {
 
@@ -35,14 +37,19 @@ public class UserMediaTracker {
     @JoinColumn(name = "media_id")
     private Media media;
 
-    private Integer score; // Tu nota personal (1-10)
+    private Integer score; 
 
     @Enumerated(EnumType.STRING)
-    private UserStatus userStatus; // LEYENDO, PENDIENTE, TERMINADO...
+    private UserStatus userStatus; 
 
     private LocalDate startDate;
     private LocalDate finishDate;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
 }
