@@ -62,7 +62,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + (120 * 60000)))
                 .sign(Algorithm.HMAC512(this.secret));
 
-            AuthResponse finalResponse = new AuthResponse(token, null);
+            AuthResponse finalResponse = new AuthResponse(token);
 
         response.addHeader("Authorization", "Bearer " + token);
         response.setContentType("application/json");

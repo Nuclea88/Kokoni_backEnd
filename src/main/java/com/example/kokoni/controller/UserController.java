@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.kokoni.dto.request.UpdateUserRequest;
+import com.example.kokoni.dto.response.UserProfileResponse;
 import com.example.kokoni.entity.User;
+import com.example.kokoni.security.UserDetail;
 import com.example.kokoni.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,29 +31,28 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        System.out.println("Cuerpo crudo: " + user);
-        User newUser = userService.registerUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable long id) {
     User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> updateUSer(@PathVariable long id, 
-                                                @Valid @RequestBody User user) {
-        userService.updateUser(id, user);
+     @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getMyProfile() {
+         
+        UserProfileResponse profileData = userService.getUserProfile();
+        return new ResponseEntity<>(profileData, HttpStatus.OK);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<HttpStatus> updateUSer(@Valid @RequestBody UpdateUserRequest request) {
+        userService.updateUser(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable long id) {
-        userService.deleteUser(id);
+    @DeleteMapping("/me")
+    public ResponseEntity<HttpStatus> deleteUser() {
+        userService.deleteUser();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

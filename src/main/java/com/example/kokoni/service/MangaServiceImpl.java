@@ -2,10 +2,14 @@ package com.example.kokoni.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.kokoni.dto.response.MangaDetailResponse;
+import com.example.kokoni.dto.response.MangaSummaryResponse;
 import com.example.kokoni.entity.Manga;
+import com.example.kokoni.mapper.MangaMapper;
 import com.example.kokoni.repository.MangaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -19,11 +23,31 @@ public class MangaServiceImpl implements MangaService{
     private final MangaProvider mangaProvider;
     private final MangaRepository mangaRepository;
     private final List<MangaMetadataEnricher> enrichers;
+    private final MangaMapper mangaMapper;
+    private final UserMediaTrackerService trackerService;
+    private final UserChapterProgressService progressService;
 
-    
     @Override
-    public List<Manga> searchInApi(String query, int page) {
-        return mangaProvider.searchManga(query, page);
+    public List<MangaSummaryResponse> searchManga(String query, int page) {
+        
+        List<Manga> rawMangas = mangaProvider.searchManga(query, page);
+        
+        return rawMangas.stream()
+                .map(manga ->{
+                    boolean isAdded = trackerService.isMangaTrackedByExternalId(manga.getExternalId());
+                    return mangaMapper.toSummaryResponse(manga, isAdded);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public MangaDetailResponse getMangaDetails(String externalId) {
+        Manga manga = searchAndSave(externalId);
+      
+        boolean isAddedInTracker = trackerService.isMangaTrackedByMe(manga.getId());
+        Integer currentChapter = progressService.getCurrentChapterForManga(manga.getId());;
+        return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter);
     }
 
     @Override
@@ -37,12 +61,7 @@ public class MangaServiceImpl implements MangaService{
         .orElseThrow(()-> new EntityNotFoundException("Manga no encontrado"));
     }
 
-//     @Override
-//     public Manga getMangaByExternalId(String externalId) {
-//     return findMangaByExternalId(externalId)
-//         .orElseThrow(() -> new EntityNotFoundException("Manga con ID externa " + externalId + " no encontrado en tu lista"));
-// }
-
+    @Override
     @Transactional
     public Manga searchAndSave(String externalId) {
     
@@ -52,6 +71,7 @@ public class MangaServiceImpl implements MangaService{
                 return mangaRepository.save(mangaToSave);
         });
     }
+    @Override
     public void enrichData(Manga manga) {
         if (enrichers != null) {
             enrichers.forEach(enricher -> enricher.enrich(manga));

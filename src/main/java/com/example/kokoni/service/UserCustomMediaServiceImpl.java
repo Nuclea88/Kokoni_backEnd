@@ -26,18 +26,17 @@ private final UserCustomMediaMapper customMediaMapper;
 private final UserService userService;
 
     @Transactional
-    public UserCustomMedia createCustom(UserCustomMediaDTORequest request, Long userId) {
+    public UserCustomMedia createCustom(UserCustomMediaDTORequest request) {
        
         UserCustomMedia custom = customMediaMapper.toEntity(request);
         
-        User creator = userService.findById(userId);
+        User creator = userService.getAuthenticatedUser();
         custom.setCreator(creator);
         custom.setProvider("USER_CUSTOM");
 
         if (request.baseMangaId() != null) {
             Manga base = mangaService.findById(request.baseMangaId());
             custom.setBaseManga(base);
-
 
         custom.setImageUrl(request.imageUrl() != null ? request.imageUrl() : base.getImageUrl());
         custom.setDescription(request.description() != null ? request.description() : base.getDescription());
@@ -76,15 +75,8 @@ private final UserService userService;
         }
 
        UserCustomMedia saved = repository.save(custom);
-     System.out.println("el request es"+ request);
-     System.out.println("el cusgtom es" + custom);
-    // DEBUG: Mira la consola de IntelliJ/VSCode
-    System.out.println("ID SALVADO: " + saved.getId());
-    System.out.println("URL SALVADA: " + saved.getImageUrl());
-    System.out.println("TITULOS SIZE: " + (saved.getTitles() != null ? saved.getTitles().size() : "NULL"));
-    
-    return saved;
-}
+        return saved;
+    }
 
     @Override
     public UserCustomMedia findById(Long id){
