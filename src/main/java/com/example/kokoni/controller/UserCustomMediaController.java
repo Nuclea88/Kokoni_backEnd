@@ -41,7 +41,7 @@ public class UserCustomMediaController {
     @PutMapping("/{id}")
     public ResponseEntity<UserCustomMediaDTOResponse> update(
             @PathVariable Long id, 
-            @RequestBody UserCustomMediaDTORequest request) {
+            @Valid @RequestBody UserCustomMediaDTORequest request) {
         return ResponseEntity.ok(customMediaService.update(id, request));
     }
 

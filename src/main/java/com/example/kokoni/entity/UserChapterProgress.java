@@ -26,7 +26,7 @@ public class UserChapterProgress {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tracker_id")
+    @JoinColumn(name = "tracker_id", nullable = false)
     private UserMediaTracker tracker;
 
     @Column(name = "progress_unit", nullable = false)
