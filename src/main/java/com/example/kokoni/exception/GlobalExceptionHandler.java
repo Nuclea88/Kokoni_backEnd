@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,5 +62,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorInfo> EntityNotFoundError(EntityNotFoundException e) {
         ErrorInfo body = new ErrorInfo(404, "not found: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorInfo> UsernameNotFoundError(UsernameNotFoundException e) {
+        ErrorInfo body = new ErrorInfo(403, "bad credentials: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 }

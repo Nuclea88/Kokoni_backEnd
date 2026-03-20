@@ -39,7 +39,7 @@ public class SpringConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .csrf(csfr -> csfr.disable())
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/login", "/registrer").permitAll()
+                .requestMatchers("/login", "/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/mangas/**").permitAll()
                 .anyRequest().authenticated()
             )
