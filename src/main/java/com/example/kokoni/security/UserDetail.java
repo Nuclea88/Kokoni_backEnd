@@ -1,35 +1,37 @@
 package com.example.kokoni.security;
 
-// import java.util.Collection;
-// import java.util.Collections;
-// import org.springframework.security.core.GrantedAuthority;
-// import org.springframework.security.core.userdetails.UserDetails;
-// import com.swapp.swapp.entity.User;
+import java.util.Collection;
+import java.util.Collections;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-// public class UserDetail implements UserDetails {
+import com.example.kokoni.entity.User;
 
-//     private final User user;
 
-//     public UserDetail(User user){
-//         this.user = user;
-//     }
-//     public User getUser() {
-//         return user;
-//     }
+public class UserDetail implements UserDetails {
 
-//     @Override
-//     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return Collections.emptyList();
-//     }
+    private final User user;
 
-//     @Override
-//     public String getPassword() {
-//         return user.getPassword();
-//     }
+    public UserDetail(User user){
+        this.user = user;
+    }
+    public User getUser() {
+        return user;
+    }
 
-//     @Override
-//     public String getUsername() {
-//         return user.getUserName();
-//     }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+       return Collections.emptyList();
+    }
 
-// }
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+}
