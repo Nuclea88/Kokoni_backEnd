@@ -19,7 +19,7 @@ public interface MangaMapper {
     MangaSummaryResponse toSummaryResponse(Manga manga, Boolean isAdded);
     
     @Mapping(target = "rankPosition", source = "manga.popularityCount") 
-    MangaDetailResponse toDetailResponse(Manga manga, Integer currentChapter);
+    MangaDetailResponse toDetailResponse(Manga manga, Boolean isAddedInTracker, Integer currentChapter);
 
 }
 
