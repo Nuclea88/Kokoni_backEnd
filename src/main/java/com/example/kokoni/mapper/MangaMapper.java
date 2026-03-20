@@ -2,24 +2,26 @@ package com.example.kokoni.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.example.kokoni.dto.response.MangaDTOResponse;
+import com.example.kokoni.dto.response.MangaDetailResponse;
+import com.example.kokoni.dto.response.MangaSummaryResponse;
 import com.example.kokoni.entity.Manga;
-import com.example.kokoni.entity.Media;
-import com.example.kokoni.entity.MediaTitle;
+import com.example.kokoni.utils.MediaTitleHelper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",  unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {MediaTitleHelper.class})
 public interface MangaMapper {
 
-    @Mapping(target = "title", expression = "java(getPrimaryTitle(manga))")
     MangaDTOResponse toDTO(Manga manga);
 
-    default String getPrimaryTitle(Media media) {
-        if (media.getTitles() == null || media.getTitles().isEmpty()) return null;
-        return media.getTitles().stream()
-                .filter(t -> Boolean.TRUE.equals(t.getIsPrimary()))
-                .findFirst()
-                .map(MediaTitle::getTitle)
-                .orElse(media.getTitles().get(0).getTitle());
-    }
+    @Mapping(target = "isAddedToLibrary", source = "isAdded")
+    MangaSummaryResponse toSummaryResponse(Manga manga, Boolean isAdded);
+    
+    @Mapping(target = "rankPosition", source = "manga.popularityCount") 
+    MangaDetailResponse toDetailResponse(Manga manga, Integer currentChapter);
+
 }
+
+    
+

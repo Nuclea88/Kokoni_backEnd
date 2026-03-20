@@ -8,7 +8,7 @@ public record MangaDetailResponse(
     String title,
     String author,
     String imageUrl,
-    Double score,
+    Double averageScore,
     Integer rankPosition, 
     Integer readersCount, 
     String status, 
@@ -16,5 +16,5 @@ public record MangaDetailResponse(
     List<String> genres,
     Integer totalChapters,
     
-    Integer userCurrentChapter 
+    Integer currentChapter 
 ) {}

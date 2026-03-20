@@ -31,6 +31,9 @@ public class User {
 
     private String password;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl; 
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
     

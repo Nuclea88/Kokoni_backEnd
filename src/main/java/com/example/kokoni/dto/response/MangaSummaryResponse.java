@@ -8,7 +8,7 @@ public record MangaSummaryResponse(
     String title,
     String author,
     String imageUrl,
-    Double score, 
+    Double averageScore, 
     List<String> genres, 
     Boolean isAddedToLibrary 
 ) {
