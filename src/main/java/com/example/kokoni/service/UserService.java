@@ -17,6 +17,7 @@ public interface UserService extends UserDetailsService{
 
     void updateUser(UpdateUserRequest request);
 
-    public void deleteUser();
+    void deleteUser();
 
+    User getAuthenticatedUser();
 }

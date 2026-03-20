@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kokoni.dto.request.RegisterRequest;
 import com.example.kokoni.dto.request.UpdateUserRequest;
@@ -58,8 +57,7 @@ public class UserServiceImpl implements UserService {
 
      @Override
     public UserProfileResponse getUserProfile() {
-        Long myId = getAuthenticatedUserId();
-        User user = findById(myId);
+        User user = getAuthenticatedUser();
         //  A futuro, hacer queries reales a la tabla UserChapterProgress para sumar estos números.
         // Por ahora hardcodeamos unos valores para que el Frontend ya pueda pintar la tarjeta "LV 42".
         Integer mockedLevel = 42;
@@ -79,10 +77,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(UpdateUserRequest request) {
-        Long myId = getAuthenticatedUserId();
-        User existingUser = userRepository.findById(myId)
-            .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-
+        User existingUser = getAuthenticatedUser();
+           
         if (request.username() != null) existingUser.setUsername(request.username());
         if (request.email() != null) existingUser.setEmail(request.email());
         if (request.avatarUrl() != null) existingUser.setAvatarUrl(request.avatarUrl());
@@ -96,18 +92,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser() {
-    Long myId = getAuthenticatedUserId();
-        userRepository.deleteById(myId);
+    User user= getAuthenticatedUser();
+        userRepository.deleteById(user.getId());
     }
 
-
-private Long getAuthenticatedUserId() {
+    @Override
+    public User getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
         throw new RuntimeException("No autorizado");
     }
     UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-    return userDetail.getUser().getId();
+    return findById(userDetail.getUser().getId());
 }
 }
 

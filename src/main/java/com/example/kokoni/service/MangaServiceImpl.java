@@ -24,15 +24,18 @@ public class MangaServiceImpl implements MangaService{
     private final MangaRepository mangaRepository;
     private final List<MangaMetadataEnricher> enrichers;
     private final MangaMapper mangaMapper;
+    private final UserMediaTrackerService trackerService;
 
     @Override
     public List<MangaSummaryResponse> searchManga(String query, int page) {
         
         List<Manga> rawMangas = mangaProvider.searchManga(query, page);
         
-        // Mapeamos a DTO (Asumimos falso para "isAdded" de momento hasta que hagamos el Tracker)
         return rawMangas.stream()
-                .map(manga -> mangaMapper.toSummaryResponse(manga, false))
+                .map(manga ->{
+                    boolean isAdded = trackerService.isMangaTrackedByExternalId(manga.getExternalId());
+                    return mangaMapper.toSummaryResponse(manga, isAdded);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -41,7 +44,7 @@ public class MangaServiceImpl implements MangaService{
     public MangaDetailResponse getMangaDetails(String externalId) {
         Manga manga = searchAndSave(externalId);
         //  Cuando implementemos el Tracker, aquí calcularemos si el AuthUser lo tiene añadido.
-        boolean isAddedInTracker = false; 
+        boolean isAddedInTracker = trackerService.isMangaTrackedByMe(manga.getId());
         Integer currentChapter = 0;
         return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter);
     }
