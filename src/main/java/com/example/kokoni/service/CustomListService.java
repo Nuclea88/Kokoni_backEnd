@@ -2,21 +2,24 @@ package com.example.kokoni.service;
 
 import java.util.List;
 
-import com.example.kokoni.entity.CustomList;
-import com.example.kokoni.entity.Media;
+import com.example.kokoni.dto.request.CustomListRequest;
+import com.example.kokoni.dto.response.CustomListDetailsResponse;
+import com.example.kokoni.dto.response.CustomListSummaryResponse;
 import com.example.kokoni.entity.User;
 
 public interface CustomListService {
 
     void createDefaultList(User user, String name);
 
-    CustomList createList(CustomList list, User owner);
+    CustomListSummaryResponse createList(CustomListRequest request);
 
-    List<CustomList> getListsByUser(Long userId);
+    List<CustomListSummaryResponse> getMyLists();
 
-    void addItemToList(Long listId, Media media);
+    CustomListDetailsResponse getListDetails(Long listId);
 
-    void removeItemToList(Long listId, Long listItemId);
+    void addMangaToList(Long listId, String externalId);
+
+    void removeMangaFromList(Long listId, Long listItemId);
 
     void deleteList(Long id);
 }

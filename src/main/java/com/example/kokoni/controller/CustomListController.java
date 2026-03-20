@@ -3,6 +3,7 @@ package com.example.kokoni.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.kokoni.entity.CustomList;
-import com.example.kokoni.entity.Media;
-import com.example.kokoni.entity.User;
+import com.example.kokoni.dto.request.CustomListRequest;
+import com.example.kokoni.dto.response.CustomListDetailsResponse;
+import com.example.kokoni.dto.response.CustomListSummaryResponse;
 import com.example.kokoni.service.CustomListService;
-import com.example.kokoni.service.MediaService;
-import com.example.kokoni.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,45 +27,41 @@ import lombok.RequiredArgsConstructor;
 public class CustomListController {
 
     private final CustomListService customListService;
-    private final UserService userService;
-    private final MediaService mediaService;
 
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<CustomList> create(@PathVariable Long userId, @RequestBody CustomList list) {
-        User owner = userService.findById(userId);
-        return new ResponseEntity<>(customListService.createList(list, owner), HttpStatus.CREATED);
+    @GetMapping
+    public ResponseEntity<List<CustomListSummaryResponse>> getMyLists() {
+        List<CustomListSummaryResponse> list = customListService.getMyLists();
+        return new ResponseEntity<>(list,HttpStatus.OK); 
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CustomList>> getByUserId(@PathVariable Long userId) {
-        List<CustomList> list = customListService.getListsByUser(userId);
-        return new ResponseEntity<>(list,HttpStatus.OK);
+    @GetMapping("/{listId}")
+    public ResponseEntity<CustomListDetailsResponse> getListDetails(@PathVariable Long listId) {
+        CustomListDetailsResponse listDetails = customListService.getListDetails(listId);
+        return new ResponseEntity<>(listDetails, HttpStatus.OK); 
     }
 
-
-
-    //A REVISAR
-    @PostMapping("/{listId}/media/{mediaId}")
-    public ResponseEntity<Void> addItem(@PathVariable Long listId, @PathVariable Long mediaId) {
-        Media media = mediaService.findById(mediaId); 
-        customListService.addItemToList(listId, media);
-        return new ResponseEntity<>( HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<CustomListSummaryResponse> createList(@Valid @RequestBody CustomListRequest request) {
+        return new ResponseEntity<>(customListService.createList(request), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{listId}/items/{listItemId}")
-    public ResponseEntity<Void> removeItem(@PathVariable Long listId, @PathVariable Long listItemId) {
-        customListService.removeItemToList(listId, listItemId);
+    @DeleteMapping("/{listId}")
+    public ResponseEntity<Void> deleteList(@PathVariable Long listId) {
+        customListService.deleteList(listId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
-
-
-    // DELETE /api/lists/5 -> Borra la lista 5 (y sus items por CascadeType.ALL)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        customListService.deleteList(id);
-         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("/{listId}/items/{externalId}")
+    public ResponseEntity<Void> addMangaToList(@PathVariable Long listId, @PathVariable String externalId) {
+        customListService.addMangaToList(listId, externalId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{listId}/items/{listItemId}")
+    public ResponseEntity<Void> removeMangaFromList(@PathVariable Long listId, @PathVariable Long listItemId) {
+        customListService.removeMangaFromList(listId, listItemId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }
 
