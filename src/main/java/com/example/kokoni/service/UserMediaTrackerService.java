@@ -3,6 +3,7 @@ import java.util.List;
 import com.example.kokoni.dto.request.AddTrackerRequest;
 import com.example.kokoni.dto.request.UpdateTrackerRequest;
 import com.example.kokoni.dto.response.TrackerItemResponse;
+import com.example.kokoni.entity.UserMediaTracker;
 
 public interface UserMediaTrackerService {
 
@@ -17,4 +18,6 @@ public interface UserMediaTrackerService {
     boolean isMangaTrackedByMe(Long mediaId);
 
     boolean isMangaTrackedByExternalId(String externalId);
+
+    UserMediaTracker getTrackerEntityInternal(Long trackerId);
 }

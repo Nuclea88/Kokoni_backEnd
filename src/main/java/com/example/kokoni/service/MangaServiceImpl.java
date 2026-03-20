@@ -25,6 +25,7 @@ public class MangaServiceImpl implements MangaService{
     private final List<MangaMetadataEnricher> enrichers;
     private final MangaMapper mangaMapper;
     private final UserMediaTrackerService trackerService;
+    private final UserChapterProgressService progressService;
 
     @Override
     public List<MangaSummaryResponse> searchManga(String query, int page) {
@@ -43,9 +44,9 @@ public class MangaServiceImpl implements MangaService{
     @Transactional
     public MangaDetailResponse getMangaDetails(String externalId) {
         Manga manga = searchAndSave(externalId);
-        //  Cuando implementemos el Tracker, aquí calcularemos si el AuthUser lo tiene añadido.
+      
         boolean isAddedInTracker = trackerService.isMangaTrackedByMe(manga.getId());
-        Integer currentChapter = 0;
+        Integer currentChapter = progressService.getCurrentChapterForManga(manga.getId());;
         return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter);
     }
 

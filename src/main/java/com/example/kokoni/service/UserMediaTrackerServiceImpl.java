@@ -91,17 +91,6 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
         }
     }
 
-    private UserMediaTracker getMyTrackerOrThrow(Long trackerId, User me) {
-        UserMediaTracker tracker = trackerRepository.findById(trackerId)
-            .orElseThrow(() -> new EntityNotFoundException("Tracker no encontrado"));
-                
-        if (!tracker.getUser().getId().equals(me.getId())) {
-            throw new RuntimeException("Acceso denegado: Este tracker no te pertenece.");
-        }
-        
-        return tracker;
-    }
-
     @Override
     public boolean isMangaTrackedByExternalId(String externalId) {
         try {
@@ -112,5 +101,22 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
         } catch (Exception e) {
             return false; 
         }
+    }
+
+    @Override
+    public UserMediaTracker getTrackerEntityInternal(Long trackerId) {
+        User me = userService.getAuthenticatedUser();
+        return getMyTrackerOrThrow(trackerId, me);
+    }
+
+     private UserMediaTracker getMyTrackerOrThrow(Long trackerId, User me) {
+        UserMediaTracker tracker = trackerRepository.findById(trackerId)
+            .orElseThrow(() -> new EntityNotFoundException("Tracker no encontrado"));
+                
+        if (!tracker.getUser().getId().equals(me.getId())) {
+            throw new RuntimeException("Acceso denegado: Este tracker no te pertenece.");
+        }
+        
+        return tracker;
     }
 }

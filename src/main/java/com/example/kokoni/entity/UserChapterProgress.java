@@ -37,10 +37,10 @@ public class UserChapterProgress {
     
     private LocalDate readDate;
     
-    private String reaction; // Guardamos el nombre del emoji: "FIRE", "CRY", "LOVE"
+    private String reaction; 
 
     @Column(name = "is_special")
-    private Boolean isSpecial = false; // Para capítulos .5 o extras
+    private Boolean isSpecial = false; 
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
