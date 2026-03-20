@@ -3,6 +3,8 @@ package com.example.kokoni.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,13 +16,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Table(name = "custom_lists")
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomList {
 
     @Id
@@ -33,7 +39,8 @@ public class CustomList {
     private Boolean isPublic = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"mangaLists", "password", "email", "hibernateLazyInitializer", "handler"})
     private User owner;
 
     // Relación con los items de la lista

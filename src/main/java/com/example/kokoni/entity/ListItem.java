@@ -12,7 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -20,6 +22,8 @@ import lombok.Setter;
     @UniqueConstraint(columnNames = {"list_id", "media_id"})
 })
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListItem {
 
     @Id

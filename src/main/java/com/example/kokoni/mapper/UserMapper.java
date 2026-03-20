@@ -1,22 +1,17 @@
 package com.example.kokoni.mapper;
-// package com.example.mapper;
 
-// import org.mapstruct.BeanMapping;
-// import org.mapstruct.Mapper;
-// import org.mapstruct.MappingTarget;
-// import org.mapstruct.NullValuePropertyMappingStrategy;
-// import org.mapstruct.ReportingPolicy;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
+
+import com.example.kokoni.dto.request.RegisterRequest;
+import com.example.kokoni.dto.response.UserProfileResponse;
+import com.example.kokoni.entity.User;
 
 
-// @Mapper(componentModel ="spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-// public interface UserMapper {
-//     User toEntity (UserRequestDTO dto, byte[] picture);
+@Mapper(componentModel ="spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface UserMapper {
+   
+    UserProfileResponse toProfileResponse(User user, Integer level, String rankName, Integer totalChaptersRead, Integer streakDays, Integer timeReadHours);
 
-//     UserBasicResponseDTO toBasicResponse (User user);
-
-//     UserProfileResponseDTO toProfileResponse (User user);
-
-//     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-//     void updateEntityFromDto(UserRequestDTO dto, @MappingTarget User user);
-
-// }
+    User toEntity(RegisterRequest request);
+}

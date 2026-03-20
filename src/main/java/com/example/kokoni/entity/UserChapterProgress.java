@@ -1,6 +1,7 @@
 package com.example.kokoni.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,11 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_chapter_progress")
+@Table(name = "user_chapter_progress", uniqueConstraints = {@UniqueConstraint(columnNames = {"tracker_id", "progress_unit"})})
 @Getter @Setter
 public class UserChapterProgress {
 
@@ -27,8 +29,11 @@ public class UserChapterProgress {
     @JoinColumn(name = "tracker_id")
     private UserMediaTracker tracker;
 
-    private Integer chapterNumber;
-    private Integer volumeNumber; // O "Season"
+    @Column(name = "progress_unit", nullable = false)
+    private Integer progressUnit;
+
+    @Column(name ="sub_unit")
+    private Integer subUnit; 
     
     private LocalDate readDate;
     
@@ -36,4 +41,7 @@ public class UserChapterProgress {
 
     @Column(name = "is_special")
     private Boolean isSpecial = false; // Para capítulos .5 o extras
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 }
