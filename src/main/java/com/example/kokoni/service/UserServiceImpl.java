@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUsername(request.username())) {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
-        if (userRepository.existsByEmail(request.username())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
