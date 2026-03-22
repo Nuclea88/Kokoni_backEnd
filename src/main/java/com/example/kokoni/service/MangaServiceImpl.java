@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import com.example.kokoni.dto.response.MangaDetailResponse;
 import com.example.kokoni.dto.response.MangaSummaryResponse;
 import com.example.kokoni.entity.Manga;
+import com.example.kokoni.entity.User;
 import com.example.kokoni.mapper.MangaMapper;
 import com.example.kokoni.repository.MangaRepository;
+import com.example.kokoni.repository.UserChapterProgressRepository;
+import com.example.kokoni.repository.UserMediaTrackerRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -24,8 +27,9 @@ public class MangaServiceImpl implements MangaService{
     private final MangaRepository mangaRepository;
     private final List<MangaMetadataEnricher> enrichers;
     private final MangaMapper mangaMapper;
-    private final UserMediaTrackerService trackerService;
-    private final UserChapterProgressService progressService;
+    private final UserMediaTrackerRepository trackerRepository;
+    private final UserChapterProgressRepository progressRepository;
+    private final AuthService authService;
 
     @Override
     public List<MangaSummaryResponse> searchManga(String query, int page) {
@@ -34,7 +38,8 @@ public class MangaServiceImpl implements MangaService{
         
         return rawMangas.stream()
                 .map(manga ->{
-                    boolean isAdded = trackerService.isMangaTrackedByExternalId(manga.getExternalId());
+                    User me = authService.getOptionalAuthenticatedUser();
+                    boolean isAdded = me != null && trackerRepository.existsByUserIdAndMediaExternalId(me.getId(), manga.getExternalId());
                     return mangaMapper.toSummaryResponse(manga, isAdded);
                 })
                 .collect(Collectors.toList());
@@ -44,9 +49,11 @@ public class MangaServiceImpl implements MangaService{
     @Transactional
     public MangaDetailResponse getMangaDetails(String externalId) {
         Manga manga = searchAndSave(externalId);
+        User me = authService.getOptionalAuthenticatedUser();
       
-        boolean isAddedInTracker = trackerService.isMangaTrackedByMe(manga.getId());
-        Integer currentChapter = progressService.getCurrentChapterForManga(manga.getId());;
+        boolean isAddedInTracker = me != null && trackerRepository.existsByUserIdAndMediaId(me.getId(), manga.getId());
+        Integer highest = me != null ? progressRepository.findHighestChapterRead(me.getId(), manga.getId()) : 0;
+        Integer currentChapter = highest != null ? highest : 0;
         return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter);
     }
 

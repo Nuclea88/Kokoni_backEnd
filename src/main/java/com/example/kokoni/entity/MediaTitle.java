@@ -1,7 +1,6 @@
 package com.example.kokoni.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,12 +26,11 @@ public class MediaTitle {
     private Long id;
 
     private String title;
-    private String languageCode; // "es", "en", "ko"
+    private String languageCode; 
     private Boolean isPrimary;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "media_id")
-    // @JsonIgnoreProperties("titles")
     @JsonBackReference
     private Media media;
 }

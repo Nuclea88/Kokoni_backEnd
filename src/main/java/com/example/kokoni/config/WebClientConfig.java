@@ -11,6 +11,7 @@ public class WebClientConfig {
     public WebClient webClient(WebClient.Builder builder) {
         return builder
             .baseUrl("https://api.mangadex.org")
+            .defaultHeader("User-Agent", "KokoniApp/1.0 (contact@kokoni.com)")
             .build();
     }
 }

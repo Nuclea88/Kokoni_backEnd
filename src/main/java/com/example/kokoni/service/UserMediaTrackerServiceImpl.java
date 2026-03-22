@@ -3,8 +3,6 @@ package com.example.kokoni.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.example.kokoni.dto.request.AddTrackerRequest;
 import com.example.kokoni.dto.request.UpdateTrackerRequest;
@@ -14,7 +12,6 @@ import com.example.kokoni.entity.User;
 import com.example.kokoni.entity.UserMediaTracker;
 import com.example.kokoni.mapper.TrackerMapper;
 import com.example.kokoni.repository.UserMediaTrackerRepository;
-import com.example.kokoni.security.UserDetail;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +22,13 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
 
     private final UserMediaTrackerRepository trackerRepository;
     private final MangaService mangaService; 
-    private final UserService userService;
+    private final AuthService authService;
     private final TrackerMapper trackerMapper;
 
     @Override
     @Transactional
     public TrackerItemResponse addTracker(AddTrackerRequest request) {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         
         Manga manga = mangaService.searchAndSave(request.externalId());
         if (trackerRepository.existsByUserIdAndMediaId(me.getId(), manga.getId())) {
@@ -52,7 +49,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
 
     @Override
     public List<TrackerItemResponse> getMyTrackers() {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         
         return trackerRepository.findByUserId(me.getId())
                 .stream()
@@ -63,7 +60,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
     @Override
     @Transactional
     public TrackerItemResponse updateTracker(Long trackerId, UpdateTrackerRequest request) {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         UserMediaTracker tracker = getMyTrackerOrThrow(trackerId, me);
       
         if (request.status() != null) tracker.setUserStatus(request.status());
@@ -76,7 +73,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
     @Override
     @Transactional
     public void deleteTracker(Long trackerId) {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         UserMediaTracker tracker = getMyTrackerOrThrow(trackerId, me);
         trackerRepository.delete(tracker);
     }
@@ -84,7 +81,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
     @Override
     public boolean isMangaTrackedByMe(Long mediaId) {
         try {
-            User me = userService.getAuthenticatedUser();
+            User me = authService.getAuthenticatedUser();
             return trackerRepository.existsByUserIdAndMediaId(me.getId(), mediaId);
         } catch (Exception e) {
             return false; 
@@ -94,7 +91,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
     @Override
     public boolean isMangaTrackedByExternalId(String externalId) {
         try {
-            User me = userService.getAuthenticatedUser();
+            User me = authService.getAuthenticatedUser();
             
             return trackerRepository.findByUserId(me.getId()).stream()
                 .anyMatch(tracker -> tracker.getMedia().getExternalId().equals(externalId));
@@ -105,7 +102,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
 
     @Override
     public UserMediaTracker getTrackerEntityInternal(Long trackerId) {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         return getMyTrackerOrThrow(trackerId, me);
     }
 

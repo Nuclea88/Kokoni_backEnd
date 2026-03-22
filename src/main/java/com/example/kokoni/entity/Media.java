@@ -40,9 +40,10 @@ public class Media {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Column(name = "external_id")
+    @Column(name = "external_id", nullable = false)
     private String externalId;
 
+    @Column(nullable = false)
     private String provider; // Ej: "MANGADEX"
 
     @Column(columnDefinition = "TEXT")

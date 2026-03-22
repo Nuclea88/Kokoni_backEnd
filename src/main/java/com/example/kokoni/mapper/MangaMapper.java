@@ -15,9 +15,11 @@ public interface MangaMapper {
 
     MangaDTOResponse toDTO(Manga manga);
 
+    @Mapping(target = "title", source = "manga") 
     @Mapping(target = "isAddedToLibrary", source = "isAdded")
     MangaSummaryResponse toSummaryResponse(Manga manga, Boolean isAdded);
     
+    @Mapping(target = "title", source = "manga") 
     @Mapping(target = "rankPosition", source = "manga.popularityCount") 
     MangaDetailResponse toDetailResponse(Manga manga, Boolean isAddedInTracker, Integer currentChapter);
 

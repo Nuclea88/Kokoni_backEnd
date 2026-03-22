@@ -1,7 +1,6 @@
 package com.example.kokoni.service;
 
 import com.example.kokoni.repository.ListItemRepository;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import com.example.kokoni.dto.response.CustomListSummaryResponse;
 import com.example.kokoni.entity.CustomList;
 import com.example.kokoni.entity.ListItem;
 import com.example.kokoni.entity.Manga;
-import com.example.kokoni.entity.Media;
 import com.example.kokoni.entity.User;
 import com.example.kokoni.mapper.CustomListMapper;
 import com.example.kokoni.repository.CustomListRepository;
@@ -28,12 +26,12 @@ public class CustomListServiceImpl implements CustomListService{
 
     private final CustomListRepository listRepository;
     private final ListItemRepository itemRepository;
-    private final UserService userService;
+    private final AuthService authService;
     private final MangaService mangaService;
     private final CustomListMapper listMapper;
 
     private CustomList getMyListOrThrow(Long listId) {
-        User me = userService.getAuthenticatedUser();
+        User me = authService.getAuthenticatedUser();
         CustomList list = listRepository.findById(listId)
             .orElseThrow(() -> new EntityNotFoundException("Lista no encontrada"));
             
@@ -56,7 +54,7 @@ public class CustomListServiceImpl implements CustomListService{
     @Override
     @Transactional
     public CustomListSummaryResponse createList(CustomListRequest request) {
-        User me = userService.getAuthenticatedUser(); 
+        User me = authService.getAuthenticatedUser(); 
         
         CustomList list = new CustomList();
         list.setName(request.name());
@@ -67,7 +65,7 @@ public class CustomListServiceImpl implements CustomListService{
 
     @Override
     public List<CustomListSummaryResponse> getMyLists() {
-      User me = userService.getAuthenticatedUser();
+      User me = authService.getAuthenticatedUser();
       List<CustomListSummaryResponse> myLists = listRepository.findByOwnerId(me.getId()).stream()
                                                 .map(listMapper::toSummaryResponse)
                                                 .collect(Collectors.toList());
