@@ -38,7 +38,7 @@ public class MangaServiceImpl implements MangaService{
         
         return rawMangas.stream()
                 .map(manga ->{
-                    User me = authService.getAuthenticatedUser();
+                    User me = authService.getOptionalAuthenticatedUser();
                     boolean isAdded = me != null && trackerRepository.existsByUserIdAndMediaExternalId(me.getId(), manga.getExternalId());
                     return mangaMapper.toSummaryResponse(manga, isAdded);
                 })
@@ -49,7 +49,7 @@ public class MangaServiceImpl implements MangaService{
     @Transactional
     public MangaDetailResponse getMangaDetails(String externalId) {
         Manga manga = searchAndSave(externalId);
-        User me = authService.getAuthenticatedUser();
+        User me = authService.getOptionalAuthenticatedUser();
       
         boolean isAddedInTracker = me != null && trackerRepository.existsByUserIdAndMediaId(me.getId(), manga.getId());
         Integer highest = me != null ? progressRepository.findHighestChapterRead(me.getId(), manga.getId()) : 0;

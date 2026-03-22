@@ -24,4 +24,18 @@ private final UserRepository userRepository;
         return userRepository.findById(userDetail.getUser().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado en la base de datos"));
     }
+
+    @Override
+    public User getOptionalAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && 
+            authentication.isAuthenticated() && 
+            authentication.getPrincipal() instanceof UserDetail) {
+            
+            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+            return userRepository.findById(userDetail.getUser().getId()).orElse(null);
+        }
+        return null;
+    }
 }

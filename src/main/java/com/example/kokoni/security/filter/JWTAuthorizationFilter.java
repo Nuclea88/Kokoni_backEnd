@@ -10,6 +10,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.kokoni.entity.User;
+import com.example.kokoni.security.UserDetail;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,10 +42,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             .verify(token);
 
         String username = decodedJWT.getSubject();
-        int userId = decodedJWT.getClaim("userId").asInt();
+        long userId = decodedJWT.getClaim("userId").asLong();
+
+        User user = new User();
+        user.setId(userId);
+        user.setUsername(username);
+        UserDetail userDetail = new UserDetail(user);
 
         List<GrantedAuthority> authorities = Collections.emptyList();
-           UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+           UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetail, null, authorities);
         authentication.setDetails(userId);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

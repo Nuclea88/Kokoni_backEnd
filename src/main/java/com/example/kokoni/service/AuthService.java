@@ -5,4 +5,6 @@ import com.example.kokoni.entity.User;
 public interface AuthService {
 
      User getAuthenticatedUser();
+
+     User getOptionalAuthenticatedUser();
 }
