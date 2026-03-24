@@ -1,5 +1,7 @@
 package com.example.kokoni.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.example.kokoni.dto.request.UserCustomMediaDTORequest;
@@ -8,9 +10,11 @@ import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.MediaTitle;
 import com.example.kokoni.entity.User;
 import com.example.kokoni.entity.UserCustomMedia;
+import com.example.kokoni.entity.UserMediaTracker;
 import com.example.kokoni.exception.TitleException;
 import com.example.kokoni.mapper.UserCustomMediaMapper;
 import com.example.kokoni.repository.UserCustomMediaRepository;
+import com.example.kokoni.repository.UserMediaTrackerRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -23,6 +27,7 @@ private final UserCustomMediaRepository repository;
 private final MangaService mangaService;
 private final UserCustomMediaMapper customMediaMapper;
 private final AuthService authService;
+private final UserMediaTrackerRepository trackerRepository;
 
     private UserCustomMedia getCustomMediaOwnedByMeOrThrow(Long id) {
         User me = authService.getAuthenticatedUser();
@@ -72,12 +77,22 @@ private final AuthService authService;
         custom.addTitle(newTitle);
         }
        UserCustomMedia saved = repository.save(custom);
+        if (request.status() != null) {
+            UserMediaTracker tracker = new UserMediaTracker();
+            tracker.setUser(creator);
+            tracker.setMedia(saved);
+            tracker.setUserStatus(request.status());
+            tracker.setScore(0);
+            tracker.setCreatedAt(LocalDateTime.now());
+            tracker.setUpdatedAt(LocalDateTime.now());
+            trackerRepository.save(tracker);
+        }
         return customMediaMapper.toResponse(saved);
     }
 
      @Override
     public UserCustomMediaDTOResponse searchById(Long id) {
-        return customMediaMapper.toResponse(findById(id));  
+        return customMediaMapper.toResponse(getCustomMediaOwnedByMeOrThrow(id));  
     }
 
     @Override

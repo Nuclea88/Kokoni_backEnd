@@ -13,6 +13,8 @@ import com.example.kokoni.utils.MediaTitleHelper;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,  uses = {MediaTitleHelper.class})
 public interface UserCustomMediaMapper {
 
+    @Mapping(target = "title", source = "custom")
+    @Mapping(target = "description", source = "description")
     UserCustomMediaDTOResponse toResponse(UserCustomMedia custom);
 
     UserCustomMedia toEntity(UserCustomMediaDTORequest request);
