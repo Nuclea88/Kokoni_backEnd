@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.kokoni.dto.request.RegisterRequest;
+import com.example.kokoni.dto.request.UpdateUserRequest;
+import com.example.kokoni.dto.response.UserProfileResponse;
 import com.example.kokoni.entity.User;
 import com.example.kokoni.mapper.UserMapper;
 import com.example.kokoni.repository.UserChapterProgressRepository;
@@ -80,5 +82,48 @@ public class UserServiceImplTest {
         assertEquals("El nombre de usuario ya está en uso", exception.getMessage());
         // Verificamos que NUNCA intentó guardarlo
         verify(userRepository, never()).save(any(User.class)); 
+    }
+    @Test
+    void getUserProfile_Success() {
+        // Arrange
+        when(authService.getAuthenticatedUser()).thenReturn(testUser);
+        when(progressRepository.countByTrackerUserId(testUser.getId())).thenReturn(25L); // 25 chapters
+        
+        UserProfileResponse expectedProfile = new UserProfileResponse(1L, "testPlayer", null, 2, "KAMI SAMA", 25, 0, 4);
+        when(userMapper.toProfileResponse(eq(testUser), eq(2), eq("KAMI SAMA"), eq(25), anyInt(), eq(4)))
+            .thenReturn(expectedProfile);
+            
+        // Act
+        UserProfileResponse result = userService.getUserProfile();
+        
+        // Assert
+        assertNotNull(result);
+        assertEquals("testPlayer", result.username());
+    }
+
+    @Test
+    void updateUser_Success() {
+        // Arrange
+        when(authService.getAuthenticatedUser()).thenReturn(testUser);
+        UpdateUserRequest updateRequest = new UpdateUserRequest("newName", null, null, null);
+        
+        // Act
+        userService.updateUser(updateRequest);
+        
+        // Assert
+        assertEquals("newName", testUser.getUsername());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    void deleteUser_Success() {
+        // Arrange
+        when(authService.getAuthenticatedUser()).thenReturn(testUser);
+        
+        // Act
+        userService.deleteUser();
+        
+        // Assert
+        verify(userRepository, times(1)).deleteById(testUser.getId());
     }
 }
