@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable long id) {
-    User user = userService.findById(id);
+        User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<HttpStatus> updateUSer(@Valid @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<HttpStatus> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         userService.updateUser(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
