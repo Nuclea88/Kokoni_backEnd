@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.example.kokoni.dto.request.AddTrackerRequest;
 import com.example.kokoni.dto.request.UpdateTrackerRequest;
 import com.example.kokoni.dto.response.TrackerItemResponse;
-import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.User;
 import com.example.kokoni.entity.UserMediaTracker;
 import com.example.kokoni.mapper.TrackerMapper;

@@ -1,4 +1,5 @@
 package com.example.kokoni.utils;
+import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 import com.example.kokoni.entity.MediaTitle;
@@ -8,6 +9,7 @@ import com.example.kokoni.entity.Media;
 @Component
 public class MediaTitleHelper {
 
+    @Named("extractTitle")
      public String extractTitleFromMedia(Media media) {
         if (media == null) return "Sin título";
         return extractTitleFromList(media.getTitles());

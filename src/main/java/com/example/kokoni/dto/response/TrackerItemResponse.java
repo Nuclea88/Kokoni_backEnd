@@ -9,7 +9,8 @@ public record TrackerItemResponse(
     String userStatus, 
     Integer progressUnit, 
     Integer totalChapters, 
-    Double progressPercentage 
+    Double progressPercentage,
+    String externalId  
 ) {
 
 }
