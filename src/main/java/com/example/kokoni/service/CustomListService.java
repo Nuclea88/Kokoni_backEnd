@@ -22,4 +22,6 @@ public interface CustomListService {
     void removeMangaFromList(Long listId, Long listItemId);
 
     void deleteList(Long id);
+
+    void removeFromAllMyLists(String externalId);
 }

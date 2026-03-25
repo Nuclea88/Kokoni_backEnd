@@ -34,13 +34,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-
-
             LoginRequest credentials = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);
             Authentication authentication = new UsernamePasswordAuthenticationToken(credentials.usernameOrEmail(), credentials.password());
             return customAuthenticationManager.authenticate(authentication);
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (IOException e) {
+            throw new RuntimeException("Error al leer el JSON de login", e);
         }
     }
 

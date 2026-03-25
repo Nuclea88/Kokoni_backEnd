@@ -22,6 +22,7 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
 
     private final UserMediaTrackerRepository trackerRepository;
     private final MangaService mangaService; 
+    private final UserCustomMediaService customMediaService;
     private final AuthService authService;
     private final TrackerMapper trackerMapper;
 
@@ -30,13 +31,19 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
     public TrackerItemResponse addTracker(AddTrackerRequest request) {
         User me = authService.getAuthenticatedUser();
         
-        Manga manga = mangaService.searchAndSave(request.externalId());
-        if (trackerRepository.existsByUserIdAndMediaId(me.getId(), manga.getId())) {
+        com.example.kokoni.entity.Media media;
+        if (request.externalId().matches("\\d+")) {
+            media = customMediaService.findById(Long.parseLong(request.externalId()));
+        } else {
+            media = mangaService.searchAndSave(request.externalId());
+        }
+
+        if (trackerRepository.existsByUserIdAndMediaId(me.getId(), media.getId())) {
             throw new RuntimeException("Este manga ya está en tu lista. Usa update para modificarlo.");
         }
         UserMediaTracker tracker = new UserMediaTracker();
         tracker.setUser(me);
-        tracker.setMedia(manga);
+        tracker.setMedia(media);
         tracker.setUserStatus(request.status());
         tracker.setScore(request.score());
         tracker.setCreatedAt(LocalDateTime.now());

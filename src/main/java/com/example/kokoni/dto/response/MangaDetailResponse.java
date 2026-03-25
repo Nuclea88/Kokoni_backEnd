@@ -16,5 +16,7 @@ public record MangaDetailResponse(
     List<String> genres,
     Integer totalChapters,
     Integer currentChapter,
-    Boolean isAddedInTracker 
+    Boolean isAddedInTracker,
+    Long trackerId,
+    List<ChapterProgressResponse> readChapters
 ) {}

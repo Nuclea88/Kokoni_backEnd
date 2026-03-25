@@ -2,9 +2,12 @@ package com.example.kokoni.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.kokoni.entity.enums.UserStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -53,4 +57,7 @@ public class UserMediaTracker {
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "tracker", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserChapterProgress> progresses = new ArrayList<>();
 }

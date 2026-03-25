@@ -6,5 +6,6 @@ public record UserCustomMediaDTOResponse(
     String imageUrl,
     String customAuthor,
     Integer customTotalChapters,
-    String customStatus
+    String customStatus,
+    String description
 ) {}

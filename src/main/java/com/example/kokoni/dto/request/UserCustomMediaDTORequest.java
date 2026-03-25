@@ -9,7 +9,8 @@ public record UserCustomMediaDTORequest(
     String imageUrl,
     String customAuthor,
     Integer customTotalChapters,
-    Long baseMangaId
+    Long baseMangaId,
+    com.example.kokoni.entity.enums.UserStatus status
 ) {
 
 }

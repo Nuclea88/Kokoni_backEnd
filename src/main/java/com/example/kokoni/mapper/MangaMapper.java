@@ -1,9 +1,12 @@
 package com.example.kokoni.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import com.example.kokoni.dto.response.ChapterProgressResponse;
 import com.example.kokoni.dto.response.MangaDTOResponse;
 import com.example.kokoni.dto.response.MangaDetailResponse;
 import com.example.kokoni.dto.response.MangaSummaryResponse;
@@ -21,8 +24,7 @@ public interface MangaMapper {
     
     @Mapping(target = "title", source = "manga") 
     @Mapping(target = "rankPosition", source = "manga.popularityCount") 
-    MangaDetailResponse toDetailResponse(Manga manga, Boolean isAddedInTracker, Integer currentChapter);
-
+    MangaDetailResponse toDetailResponse(Manga manga, Boolean isAddedInTracker, Integer currentChapter, Long trackerId, List<ChapterProgressResponse> readChapters);
 }
 
     

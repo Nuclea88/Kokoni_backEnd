@@ -40,7 +40,7 @@ public class Media {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Column(name = "external_id", nullable = false)
+    @Column(name = "external_id", unique = true)
     private String externalId;
 
     @Column(nullable = false)

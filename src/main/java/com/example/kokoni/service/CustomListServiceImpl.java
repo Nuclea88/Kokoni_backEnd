@@ -12,6 +12,7 @@ import com.example.kokoni.dto.response.CustomListSummaryResponse;
 import com.example.kokoni.entity.CustomList;
 import com.example.kokoni.entity.ListItem;
 import com.example.kokoni.entity.Manga;
+import com.example.kokoni.entity.Media;
 import com.example.kokoni.entity.User;
 import com.example.kokoni.mapper.CustomListMapper;
 import com.example.kokoni.repository.CustomListRepository;
@@ -29,6 +30,7 @@ public class CustomListServiceImpl implements CustomListService{
     private final AuthService authService;
     private final MangaService mangaService;
     private final CustomListMapper listMapper;
+    private final UserCustomMediaService customMediaService;
 
     private CustomList getMyListOrThrow(Long listId) {
         User me = authService.getAuthenticatedUser();
@@ -82,13 +84,18 @@ public class CustomListServiceImpl implements CustomListService{
     public void addMangaToList(Long listId, String externalId) {
         CustomList list = getMyListOrThrow(listId);
         
-        Manga manga = mangaService.searchAndSave(externalId);
-        if (itemRepository.existsByListIdAndMediaId(listId, manga.getId())) {
+        Media media;
+        if (externalId.matches("\\d+")) {
+            media = customMediaService.findById(Long.parseLong(externalId));
+        } else {
+            media = mangaService.searchAndSave(externalId);
+        }
+        if (itemRepository.existsByListIdAndMediaId(listId, media.getId())) {
              throw new RuntimeException("Este manga ya está en tu lista.");
         }
         ListItem item = new ListItem();
         item.setList(list);
-        item.setMedia(manga);
+        item.setMedia(media);
         itemRepository.save(item);
     }
 
@@ -112,5 +119,23 @@ public class CustomListServiceImpl implements CustomListService{
     public void deleteList(Long listId) {
         CustomList list = getMyListOrThrow(listId);
         listRepository.delete(list);
+    }
+
+    @Override
+    @Transactional
+    public void removeFromAllMyLists(String id) {
+        User me = authService.getAuthenticatedUser();
+        List<ListItem> itemsToDelete = itemRepository.findAll().stream()
+            .filter(item -> item.getList().getOwner().getId().equals(me.getId()))
+            .filter(item ->{
+                 if (id.matches("\\d+")) {
+                return item.getMedia().getId().equals(Long.parseLong(id));
+                } else {
+                    return id.equals(item.getMedia().getExternalId());
+                }
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
+        itemRepository.deleteAll(itemsToDelete);
     }
 }

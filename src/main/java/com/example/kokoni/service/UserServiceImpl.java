@@ -1,6 +1,7 @@
 package com.example.kokoni.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,11 +48,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUsername(request.username())) {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
-        if (userRepository.existsByEmail(request.username())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
         User newUser = userMapper.toEntity(request);
+        newUser.setCreatedAt(LocalDateTime.now());
         newUser.setPassword(passwordEncoder.encode(request.password()));
         User savedUser = userRepository.save(newUser);
         customListService.createDefaultList(savedUser, "Favoritos");
@@ -121,6 +123,7 @@ public class UserServiceImpl implements UserService {
         if (request.password() != null && !request.password().isBlank()) {
             existingUser.setPassword(passwordEncoder.encode(request.password()));
         }
+        existingUser.setUpdatedAt(LocalDateTime.now());
         userRepository.save(existingUser);
     }
 

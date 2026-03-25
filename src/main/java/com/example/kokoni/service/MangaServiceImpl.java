@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.kokoni.dto.response.ChapterProgressResponse;
 import com.example.kokoni.dto.response.MangaDetailResponse;
 import com.example.kokoni.dto.response.MangaSummaryResponse;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.User;
+import com.example.kokoni.mapper.ChapterProgressMapper;
 import com.example.kokoni.mapper.MangaMapper;
 import com.example.kokoni.repository.MangaRepository;
 import com.example.kokoni.repository.UserChapterProgressRepository;
@@ -27,6 +29,7 @@ public class MangaServiceImpl implements MangaService{
     private final MangaRepository mangaRepository;
     private final List<MangaMetadataEnricher> enrichers;
     private final MangaMapper mangaMapper;
+    private final ChapterProgressMapper chapterProgressMapper;
     private final UserMediaTrackerRepository trackerRepository;
     private final UserChapterProgressRepository progressRepository;
     private final AuthService authService;
@@ -46,16 +49,68 @@ public class MangaServiceImpl implements MangaService{
     }
 
     @Override
-    @Transactional
-    public MangaDetailResponse getMangaDetails(String externalId) {
-        Manga manga = searchAndSave(externalId);
+        @Transactional
+        public MangaDetailResponse getMangaDetails(String externalId) {
+
+        Optional<Manga> existingManga = findMangaByExternalId(externalId); 
+        Manga manga;
+        Long trackerId = null;
+        List<ChapterProgressResponse> readChapters = new java.util.ArrayList<>();
+        Integer currentChapter = 0;
+        boolean isAddedInTracker = false;
         User me = authService.getOptionalAuthenticatedUser();
-      
-        boolean isAddedInTracker = me != null && trackerRepository.existsByUserIdAndMediaId(me.getId(), manga.getId());
-        Integer highest = me != null ? progressRepository.findHighestChapterRead(me.getId(), manga.getId()) : 0;
-        Integer currentChapter = highest != null ? highest : 0;
-        return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter);
+
+        if (existingManga.isPresent()) {
+            manga = existingManga.get();
+            
+            if (me != null) {
+                var trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(), manga.getId());
+                if (trackerOpt.isPresent()) {
+                    var tracker = trackerOpt.get();
+                    isAddedInTracker = true;
+                    trackerId = tracker.getId();
+                    
+                    readChapters = progressRepository.findByTrackerId(trackerId).stream()
+                        .map(chapterProgressMapper::toResponse).toList();
+                    Integer highest = progressRepository.findHighestChapterRead(me.getId(), manga.getId());
+                    currentChapter = (highest != null) ? highest : 0;
+                }
+            }    
+        } else {
+            manga = getFullDetails(externalId);
+        }
+        return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter, trackerId, readChapters);
     }
+
+
+    // @Override
+    // @Transactional
+    // public MangaDetailResponse getMangaDetails(String externalId) {
+    //     Manga manga = searchAndSave(externalId);
+    //     User me = authService.getOptionalAuthenticatedUser();
+
+    //     Long trackerId = null;
+    //     List<ChapterProgressResponse> readChapters = new java.util.ArrayList<>();
+    //     Integer currentChapter = 0;
+    //     boolean isAddedInTracker = false;
+        
+    //     if (me != null) {
+    //     var trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(), manga.getId());
+    //     if (trackerOpt.isPresent()) {
+    //         var tracker = trackerOpt.get();
+    //         isAddedInTracker = true;
+    //         trackerId = tracker.getId();
+            
+    //         readChapters = progressRepository.findByTrackerId(trackerId).stream()
+    //             .map(chapterProgressMapper::toResponse)
+    //             .toList();
+    
+    //         Integer highest =  progressRepository.findHighestChapterRead(me.getId(), manga.getId());
+    //         currentChapter = (highest != null) ? highest : 0;
+    //         }
+    //     }    
+    //     return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter, trackerId, readChapters);
+    // }
 
     @Override
     public Optional<Manga> findMangaByExternalId(String externalId) {
@@ -72,12 +127,19 @@ public class MangaServiceImpl implements MangaService{
     @Transactional
     public Manga searchAndSave(String externalId) {
     
-    return findMangaByExternalId(externalId)
-        .orElseGet(() -> {
-            Manga mangaToSave = getFullDetails(externalId);
+        Optional<Manga> existing = findMangaByExternalId(externalId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+        Manga mangaToSave = getFullDetails(externalId);
+
+        try{
                 return mangaRepository.save(mangaToSave);
-        });
+        } catch (Exception e){
+                return findMangaByExternalId(externalId).orElseThrow();
+        }
     }
+    
     @Override
     public void enrichData(Manga manga) {
         if (enrichers != null) {
