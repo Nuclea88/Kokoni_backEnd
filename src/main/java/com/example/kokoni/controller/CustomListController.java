@@ -62,5 +62,11 @@ public class CustomListController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/items/external/{id}")
+    public ResponseEntity<Void> removeFromAllLists(@PathVariable String id) {
+        customListService.removeFromAllMyLists(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }
 
