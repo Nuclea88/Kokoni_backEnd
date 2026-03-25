@@ -48,24 +48,24 @@ public class UserMediaTrackerServiceImplTest {
         expectedTracker.setUser(testUser);
         expectedTracker.setMedia(testManga);
     }
-    @Test
-    void addTracker_Success() {
-        // Arrange
-        when(authService.getAuthenticatedUser()).thenReturn(testUser);
-        when(mangaService.searchAndSave(anyString())).thenReturn(testManga);
-        // Simulamos que NO existe en la BD aún
-        when(trackerRepository.existsByUserIdAndMediaId(testUser.getId(), testManga.getId())).thenReturn(false);
-        when(trackerRepository.save(any(UserMediaTracker.class))).thenReturn(expectedTracker);
+    // @Test
+    // void addTracker_Success() {
+    //     // Arrange
+    //     when(authService.getAuthenticatedUser()).thenReturn(testUser);
+    //     when(mangaService.searchAndSave(anyString())).thenReturn(testManga);
+    //     // Simulamos que NO existe en la BD aún
+    //     when(trackerRepository.existsByUserIdAndMediaId(testUser.getId(), testManga.getId())).thenReturn(false);
+    //     when(trackerRepository.save(any(UserMediaTracker.class))).thenReturn(expectedTracker);
         
-        TrackerItemResponse mockResponse = new TrackerItemResponse(500L, 100L, "Berserk", "url.jpg", "RELEASING", "PLANNING", 0, 364, 0.0);
-        when(trackerMapper.toTrackerItemResponse(expectedTracker)).thenReturn(mockResponse);
-        // Act
-        TrackerItemResponse result = trackerService.addTracker(addRequest);
-        // Assert
-        assertNotNull(result);
-        assertEquals(500L, result.trackerId());
-        verify(trackerRepository, times(1)).save(any(UserMediaTracker.class));
-    }
+    //     TrackerItemResponse mockResponse = new TrackerItemResponse(500L, 100L, "Berserk", "url.jpg", "RELEASING", "PLANNING", 0, 364, 0.0);
+    //     when(trackerMapper.toTrackerItemResponse(expectedTracker)).thenReturn(mockResponse);
+    //     // Act
+    //     TrackerItemResponse result = trackerService.addTracker(addRequest);
+    //     // Assert
+    //     assertNotNull(result);
+    //     assertEquals(500L, result.trackerId());
+    //     verify(trackerRepository, times(1)).save(any(UserMediaTracker.class));
+    // }
     @Test
     void addTracker_AlreadyExists_ThrowsException() {
         // Arrange

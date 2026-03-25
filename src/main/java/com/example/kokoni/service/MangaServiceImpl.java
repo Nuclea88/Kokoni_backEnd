@@ -11,12 +11,14 @@ import com.example.kokoni.dto.response.MangaDetailResponse;
 import com.example.kokoni.dto.response.MangaSummaryResponse;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.User;
+import com.example.kokoni.entity.UserCustomMedia;
+import com.example.kokoni.entity.UserMediaTracker;
 import com.example.kokoni.mapper.ChapterProgressMapper;
 import com.example.kokoni.mapper.MangaMapper;
 import com.example.kokoni.repository.MangaRepository;
 import com.example.kokoni.repository.UserChapterProgressRepository;
+import com.example.kokoni.repository.UserCustomMediaRepository;
 import com.example.kokoni.repository.UserMediaTrackerRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class MangaServiceImpl implements MangaService{
     private final UserMediaTrackerRepository trackerRepository;
     private final UserChapterProgressRepository progressRepository;
     private final AuthService authService;
+    private final UserCustomMediaRepository customMediaRepository;
 
     @Override
     public List<MangaSummaryResponse> searchManga(String query, int page) {
@@ -64,9 +67,26 @@ public class MangaServiceImpl implements MangaService{
             manga = existingManga.get();
             
             if (me != null) {
-                var trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(), manga.getId());
+
+
+                Optional<UserCustomMedia> customOpt = customMediaRepository.findByCreatorIdAndBaseMangaId(me.getId(), manga.getId());
+            if (customOpt.isPresent()) {
+                UserCustomMedia custom = customOpt.get();
+                // Sobreescribimos lo que haga falta
+                if (custom.getCustomTotalChapters() != null) manga.setTotalChapters(custom.getCustomTotalChapters());
+                if (custom.getCustomAuthor() != null) manga.setAuthor(custom.getCustomAuthor());
+                if (custom.getImageUrl() != null) manga.setImageUrl(custom.getImageUrl());
+                if (custom.getDescription() != null) manga.setDescription(custom.getDescription());
+            }
+
+
+
+
+
+
+                Optional<UserMediaTracker> trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(), manga.getId());
                 if (trackerOpt.isPresent()) {
-                    var tracker = trackerOpt.get();
+                    UserMediaTracker tracker = trackerOpt.get();
                     isAddedInTracker = true;
                     trackerId = tracker.getId();
                     

@@ -1,10 +1,12 @@
 package com.example.kokoni.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.example.kokoni.dto.request.UserCustomMediaDTORequest;
+import com.example.kokoni.dto.response.ChapterProgressResponse;
 import com.example.kokoni.dto.response.UserCustomMediaDTOResponse;
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.entity.MediaTitle;
@@ -12,7 +14,9 @@ import com.example.kokoni.entity.User;
 import com.example.kokoni.entity.UserCustomMedia;
 import com.example.kokoni.entity.UserMediaTracker;
 import com.example.kokoni.exception.TitleException;
+import com.example.kokoni.mapper.ChapterProgressMapper;
 import com.example.kokoni.mapper.UserCustomMediaMapper;
+import com.example.kokoni.repository.UserChapterProgressRepository;
 import com.example.kokoni.repository.UserCustomMediaRepository;
 import com.example.kokoni.repository.UserMediaTrackerRepository;
 
@@ -28,6 +32,9 @@ private final MangaService mangaService;
 private final UserCustomMediaMapper customMediaMapper;
 private final AuthService authService;
 private final UserMediaTrackerRepository trackerRepository;
+private final UserChapterProgressRepository progressRepository;
+private final ChapterProgressMapper chapterProgressMapper;
+
 
     private UserCustomMedia getCustomMediaOwnedByMeOrThrow(Long id) {
         User me = authService.getAuthenticatedUser();
@@ -92,7 +99,31 @@ private final UserMediaTrackerRepository trackerRepository;
 
      @Override
     public UserCustomMediaDTOResponse searchById(Long id) {
-        return customMediaMapper.toResponse(getCustomMediaOwnedByMeOrThrow(id));  
+        
+        UserCustomMedia media = getCustomMediaOwnedByMeOrThrow(id);
+    User me = authService.getAuthenticatedUser();
+    
+    boolean isAddedInTracker = false;
+    Long trackerId = null;
+    List<ChapterProgressResponse> readChapters = new java.util.ArrayList<>();
+    Integer currentChapter = 0;
+    var trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(), id);
+    if (trackerOpt.isPresent()) {
+        UserMediaTracker tracker = trackerOpt.get();
+        isAddedInTracker = true;
+        trackerId = tracker.getId();
+        
+        readChapters = progressRepository.findByTrackerId(trackerId).stream()
+            .map(chapterProgressMapper::toResponse).toList();
+            
+        Integer highest = progressRepository.findHighestChapterRead(me.getId(), media.getId());
+        currentChapter = (highest != null) ? highest : 0;
+    }
+    return customMediaMapper.toResponse(media, isAddedInTracker, trackerId, readChapters, currentChapter);
+// }
+        
+        
+        // return customMediaMapper.toResponse(getCustomMediaOwnedByMeOrThrow(id));  
     }
 
     @Override
