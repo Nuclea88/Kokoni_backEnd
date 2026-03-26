@@ -14,7 +14,6 @@ import com.example.kokoni.service.MangaService;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequestMapping("/api/mangas")
 @RequiredArgsConstructor

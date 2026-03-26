@@ -35,7 +35,6 @@ private final UserMediaTrackerRepository trackerRepository;
 private final UserChapterProgressRepository progressRepository;
 private final ChapterProgressMapper chapterProgressMapper;
 
-
     private UserCustomMedia getCustomMediaOwnedByMeOrThrow(Long id) {
         User me = authService.getAuthenticatedUser();
         UserCustomMedia media = repository.findById(id)
@@ -119,11 +118,7 @@ private final ChapterProgressMapper chapterProgressMapper;
         Integer highest = progressRepository.findHighestChapterRead(me.getId(), media.getId());
         currentChapter = (highest != null) ? highest : 0;
     }
-    return customMediaMapper.toResponse(media, isAddedInTracker, trackerId, readChapters, currentChapter);
-// }
-        
-        
-        // return customMediaMapper.toResponse(getCustomMediaOwnedByMeOrThrow(id));  
+    return customMediaMapper.toResponse(media, isAddedInTracker, trackerId, readChapters, currentChapter); 
     }
 
     @Override

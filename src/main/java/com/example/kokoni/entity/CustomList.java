@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "custom_lists")
 @Getter @Setter
@@ -44,7 +43,6 @@ public class CustomList {
     @JsonIgnoreProperties({"mangaLists", "password", "email", "hibernateLazyInitializer", "handler"})
     private User owner;
 
-    // Relación con los items de la lista
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListItem> items = new ArrayList<>();
 }

@@ -63,7 +63,7 @@ public class MangaServiceImpl implements MangaService {
         Integer currentChapter = 0;
         boolean isAddedInTracker = false;
         User me = authService.getOptionalAuthenticatedUser();
-        
+
         if (existingManga.isPresent()) {
             manga = existingManga.get();
 
@@ -73,7 +73,6 @@ public class MangaServiceImpl implements MangaService {
                         manga.getId());
                 if (customOpt.isPresent()) {
                     UserCustomMedia custom = customOpt.get();
-                    // Sobreescribimos lo que haga falta
                     if (custom.getCustomTotalChapters() != null)
                         manga.setTotalChapters(custom.getCustomTotalChapters());
                     if (custom.getCustomAuthor() != null)
@@ -102,38 +101,6 @@ public class MangaServiceImpl implements MangaService {
         }
         return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter, trackerId, readChapters);
     }
-
-    // @Override
-    // @Transactional
-    // public MangaDetailResponse getMangaDetails(String externalId) {
-    // Manga manga = searchAndSave(externalId);
-    // User me = authService.getOptionalAuthenticatedUser();
-
-    // Long trackerId = null;
-    // List<ChapterProgressResponse> readChapters = new java.util.ArrayList<>();
-    // Integer currentChapter = 0;
-    // boolean isAddedInTracker = false;
-
-    // if (me != null) {
-    // var trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(),
-    // manga.getId());
-    // if (trackerOpt.isPresent()) {
-    // var tracker = trackerOpt.get();
-    // isAddedInTracker = true;
-    // trackerId = tracker.getId();
-
-    // readChapters = progressRepository.findByTrackerId(trackerId).stream()
-    // .map(chapterProgressMapper::toResponse)
-    // .toList();
-
-    // Integer highest = progressRepository.findHighestChapterRead(me.getId(),
-    // manga.getId());
-    // currentChapter = (highest != null) ? highest : 0;
-    // }
-    // }
-    // return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter,
-    // trackerId, readChapters);
-    // }
 
     @Override
     public Optional<Manga> findMangaByExternalId(String externalId) {
