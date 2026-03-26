@@ -16,7 +16,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.example.kokoni.security.filter.JWTAuthenticationFilter;
 import com.example.kokoni.security.filter.JWTAuthorizationFilter;
 
-
 @Configuration
 public class SpringConfig {
 

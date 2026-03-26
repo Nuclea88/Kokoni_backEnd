@@ -14,9 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 
-
-//mirarsela con un poco mas de mimo cuando haya cabeza
-
 @Service
 @RequiredArgsConstructor
 public class UserChapterProgressServiceImpl implements UserChapterProgressService { 
