@@ -38,7 +38,7 @@ public class MangaDexExternal implements MangaProvider {
                 .build())
             .retrieve()
             .bodyToMono(MangaDexResponse.class) 
-            .block() // Como tu app no es 100% reactiva, usamos .block() para esperar el resultado
+            .block() 
             .data()
             .stream()
             .map(mangaMapper::toEntity)
@@ -61,7 +61,6 @@ public Manga searchByExternalId(String externalId) {
         throw new EntityNotFoundException("No se encontró el manga en la API externa");
     }
 
-    // EXTRAEMOS el DTO y lo pasamos al mapper directamente
-    return mangaMapper.toEntity(response.data()); // Sin .map(), es una llamada directa
+    return mangaMapper.toEntity(response.data()); 
 }
 }

@@ -57,7 +57,7 @@ private List<String> extractTitles(Manga manga) {
 
 private Optional<KitsuDataDTO> fetchBestMatch(String title, String expectedAuthor) {
     try {
-        // 1. Pedimos a Kitsu que nos incluya los autores en la respuesta (include=staff o characters es lento, mejor validamos por texto)
+      
         KitsuResponse response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/manga")
@@ -69,7 +69,6 @@ private Optional<KitsuDataDTO> fetchBestMatch(String title, String expectedAutho
 
         if (response == null || response.data().isEmpty()) return Optional.empty();
 
-        // 2. VALIDACIÓN DE SEGURIDAD
         return response.data().stream()
             .filter(data -> isReliableMatch(data.attributes(), title, expectedAuthor))
             .findFirst();
@@ -80,7 +79,7 @@ private Optional<KitsuDataDTO> fetchBestMatch(String title, String expectedAutho
 }
 
 private boolean isReliableMatch(KitsuAttributesDTO kitsuAttr, String searchTitle, String expectedAuthor) {
-    // Si el título es idéntico, ya tenemos un punto.
+
     boolean titleMatch = kitsuAttr.canonicalTitle().equalsIgnoreCase(searchTitle);
     return titleMatch; 
 }

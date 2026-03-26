@@ -7,7 +7,6 @@ import com.example.kokoni.dto.request.RegisterRequest;
 import com.example.kokoni.dto.response.UserProfileResponse;
 import com.example.kokoni.entity.User;
 
-
 @Mapper(componentModel ="spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
    

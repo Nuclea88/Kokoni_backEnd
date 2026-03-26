@@ -10,9 +10,8 @@ import com.example.kokoni.entity.UserCustomMedia;
 
 @Repository
 public interface UserCustomMediaRepository extends JpaRepository<UserCustomMedia, Long> {
-    // Buscar todas las personalizaciones de un usuario
+   
     List<UserCustomMedia> findByCreatorId(Long userId);
     
-    // Buscar si un usuario ya tiene una versión personalizada de un manga concreto
     Optional<UserCustomMedia> findByCreatorIdAndBaseMangaId(Long userId, Long baseMangaId);
 }

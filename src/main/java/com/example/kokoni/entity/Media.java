@@ -44,7 +44,7 @@ public class Media {
     private String externalId;
 
     @Column(nullable = false)
-    private String provider; // Ej: "MANGADEX"
+    private String provider; 
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -52,7 +52,6 @@ public class Media {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    // Relación con los títulos multidioma
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @Getter @Setter
@@ -63,7 +62,6 @@ public class Media {
     @Column(name = "genre")
     private Set<String> genres = new HashSet<>();
 
-    //considerar si dejarlos o quitarlos, sugerencia IA
     private Double averageScore;
     private Integer popularityCount;
 

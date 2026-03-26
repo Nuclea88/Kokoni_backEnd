@@ -48,7 +48,6 @@ public class UserMediaTrackerServiceImpl implements UserMediaTrackerService {
         tracker.setCreatedAt(LocalDateTime.now());
         tracker.setUpdatedAt(LocalDateTime.now());
         
-        //En el futuro, si el status es COMPLETED, podríamos rellenar finishDate automático.
         UserMediaTracker savedTracker = trackerRepository.save(tracker);
         return trackerMapper.toTrackerItemResponse(savedTracker);
     }

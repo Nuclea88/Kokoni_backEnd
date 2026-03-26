@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.kokoni.entity.User;
 
-
 public class UserDetail implements UserDetails {
 
     private final User user;
