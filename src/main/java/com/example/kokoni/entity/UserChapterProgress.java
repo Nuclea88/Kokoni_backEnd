@@ -43,5 +43,5 @@ public class UserChapterProgress {
     private Boolean isSpecial = false; 
 
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -47,7 +47,7 @@ public class MangaControllerTest {
         // Arrange
         MangaDetailResponse mockDetail = new MangaDetailResponse(
             1L, "Berserk", "Kentaro Miura", "url.jpg", 9.5, 1, 1000, "RELEASING", 
-            "Guts is a wanderer...", List.of("Action"), 364, 0, false, null, List.of()
+            "Guts is a wanderer...", List.of("Action"), 364, 0, false, null, "Nuclea", List.of()
         );
         when(mangaService.getMangaDetails("ext-123")).thenReturn(mockDetail);
         // Act & Assert

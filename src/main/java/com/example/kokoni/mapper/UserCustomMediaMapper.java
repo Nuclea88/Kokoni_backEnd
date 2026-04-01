@@ -13,7 +13,8 @@ import com.example.kokoni.dto.response.UserCustomMediaDTOResponse;
 import com.example.kokoni.entity.UserCustomMedia;
 import com.example.kokoni.utils.MediaTitleHelper;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { MediaTitleHelper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { MediaTitleHelper.class },nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE 
+)
 public interface UserCustomMediaMapper {
 
     @Mapping(target = "title", source = "custom", qualifiedByName = "extractTitle")
@@ -24,10 +25,10 @@ public interface UserCustomMediaMapper {
     @Mapping(target = "trackerId", source = "trackerId")
     @Mapping(target = "readChapters", source = "readChapters")
     @Mapping(target = "currentChapter", source = "currentChapter")
-    UserCustomMediaDTOResponse toResponse(UserCustomMedia custom, Boolean isAddedInTracker, Long trackerId, List<ChapterProgressResponse> readChapters, Integer currentChapter);
+    UserCustomMediaDTOResponse toResponse(UserCustomMedia custom, Boolean isAddedInTracker, Long trackerId, List<ChapterProgressResponse> readChapters, Integer currentChapter, String userStatus);
 
     UserCustomMedia toEntity(UserCustomMediaDTORequest request);
 
-    @Mapping(target = "baseManga.id", source = "baseMangaId")
+    // @Mapping(target = "baseManga.id", source = "baseMangaId")
     void updateEntity(UserCustomMediaDTORequest request, @MappingTarget UserCustomMedia entity);
 }
