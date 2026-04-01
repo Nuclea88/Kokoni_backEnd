@@ -91,11 +91,7 @@
 			<version>1.6.3</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct-processor</artifactId>
-			<version>1.5.5.Final</version>
-		</dependency>
+		<!-- Eliminado mapstruct-processor de aquí porque ya está definido en el plugin de arriba como manda el estándar -->
 		<!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
