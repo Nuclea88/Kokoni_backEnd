@@ -1,5 +1,7 @@
 package com.example.kokoni.dto.request;
 
+import com.example.kokoni.entity.enums.UserStatus;
+
 import jakarta.validation.constraints.NotBlank;
 
 public record UserCustomMediaDTORequest(
@@ -10,7 +12,7 @@ public record UserCustomMediaDTORequest(
     String customAuthor,
     Integer customTotalChapters,
     Long baseMangaId,
-    com.example.kokoni.entity.enums.UserStatus status
+    UserStatus status
 ) {
 
 }

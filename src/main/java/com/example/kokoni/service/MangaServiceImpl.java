@@ -62,6 +62,7 @@ public class MangaServiceImpl implements MangaService {
         List<ChapterProgressResponse> readChapters = new java.util.ArrayList<>();
         Integer currentChapter = 0;
         boolean isAddedInTracker = false;
+        String userStatus = null;
         User me = authService.getOptionalAuthenticatedUser();
 
         if (existingManga.isPresent()) {
@@ -69,26 +70,13 @@ public class MangaServiceImpl implements MangaService {
 
             if (me != null) {
 
-                Optional<UserCustomMedia> customOpt = customMediaRepository.findByCreatorIdAndBaseMangaId(me.getId(),
-                        manga.getId());
-                if (customOpt.isPresent()) {
-                    UserCustomMedia custom = customOpt.get();
-                    if (custom.getCustomTotalChapters() != null)
-                        manga.setTotalChapters(custom.getCustomTotalChapters());
-                    if (custom.getCustomAuthor() != null)
-                        manga.setAuthor(custom.getCustomAuthor());
-                    if (custom.getImageUrl() != null)
-                        manga.setImageUrl(custom.getImageUrl());
-                    if (custom.getDescription() != null)
-                        manga.setDescription(custom.getDescription());
-                }
-
                 Optional<UserMediaTracker> trackerOpt = trackerRepository.findByUserIdAndMediaId(me.getId(),
                         manga.getId());
                 if (trackerOpt.isPresent()) {
                     UserMediaTracker tracker = trackerOpt.get();
                     isAddedInTracker = true;
                     trackerId = tracker.getId();
+                    userStatus = tracker.getUserStatus().name();
 
                     readChapters = progressRepository.findByTrackerId(trackerId).stream()
                             .map(chapterProgressMapper::toResponse).toList();
@@ -99,7 +87,7 @@ public class MangaServiceImpl implements MangaService {
         } else {
             manga = getFullDetails(externalId);
         }
-        return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter, trackerId, readChapters);
+        return mangaMapper.toDetailResponse(manga, isAddedInTracker, currentChapter, trackerId, readChapters, userStatus);
     }
 
     @Override

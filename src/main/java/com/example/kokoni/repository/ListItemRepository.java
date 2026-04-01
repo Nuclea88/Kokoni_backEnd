@@ -7,4 +7,6 @@ import com.example.kokoni.entity.ListItem;
 @Repository
 public interface ListItemRepository extends JpaRepository<ListItem, Long>{
     boolean existsByListIdAndMediaId(Long listId, Long mediaId);
+    
+    boolean existsByMediaId(Long mediaId);
 }
