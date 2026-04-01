@@ -25,5 +25,5 @@ public interface MangaMapper {
     @Mapping(target = "title", source = "manga", qualifiedByName = "extractTitle")
     @Mapping(target = "rankPosition", source = "manga.popularityCount")
     MangaDetailResponse toDetailResponse(Manga manga, Boolean isAddedInTracker, Integer currentChapter, Long trackerId,
-            List<ChapterProgressResponse> readChapters);
+            List<ChapterProgressResponse> readChapters, String userStatus);
 }

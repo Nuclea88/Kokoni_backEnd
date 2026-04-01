@@ -83,9 +83,9 @@ public class MangaServiceImplTest {
         when(trackerRepository.findByUserIdAndMediaId(1L, 100L)).thenReturn(Optional.empty());
         
         MangaDetailResponse mockResponse = new MangaDetailResponse(
-            1L, "Test Manga", null, null, null, null, null, null, null, null, null, null, false, null, List.of()
+            1L, "Test Manga", null, null, null, null, null, null, null, null, null, null, false, null, null, List.of()
         );
-        when(mangaMapper.toDetailResponse(eq(mockManga), eq(false), eq(0), eq(null), anyList())).thenReturn(mockResponse);
+        when(mangaMapper.toDetailResponse(eq(mockManga), eq(false), eq(0), eq(null), anyList(), eq(null))).thenReturn(mockResponse);
 
         // Act
         MangaDetailResponse result = mangaService.getMangaDetails("ext-123");

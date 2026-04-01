@@ -11,8 +11,9 @@ public record UserCustomMediaDTOResponse(
         String customStatus,
         String description,
         Boolean isAddedInTracker,
-    Long trackerId,
-    List<ChapterProgressResponse> readChapters,
-    Integer currentChapter
+        Long trackerId,
+        String userStatus,
+        List<ChapterProgressResponse> readChapters,
+        Integer currentChapter
 ) {
 }
