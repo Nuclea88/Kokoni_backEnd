@@ -10,7 +10,8 @@ public record TrackerItemResponse(
     Integer progressUnit, 
     Integer totalChapters, 
     Double progressPercentage,
-    String externalId  
+    String externalId,
+    Boolean hasNewUpdate  
 ) {
 
 }

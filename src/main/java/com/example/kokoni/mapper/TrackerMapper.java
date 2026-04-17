@@ -19,6 +19,7 @@ public interface TrackerMapper {
     @Mapping(target = "progressUnit", source = "tracker")
     @Mapping(target = "totalChapters", source = "media", qualifiedByName = "calculateTotalChapters")
     @Mapping(target = "externalId", source = "media", qualifiedByName = "mapExternalId") 
+    @Mapping(target = "hasNewUpdate", source = "media", qualifiedByName = "extractHasNewUpdate")
      TrackerItemResponse toTrackerItemResponse(UserMediaTracker tracker);
 
 }

@@ -38,4 +38,14 @@ public class MediaMetadataHelper {
         }
         return 0;
     }
+    @Named("extractHasNewUpdate")
+    public Boolean extractHasNewUpdate(Media media) {
+        if (media == null) return false;
+        Object unproxied = Hibernate.unproxy(media);
+        if (unproxied instanceof Manga) {
+            Boolean hasUpdate = ((Manga) unproxied).getHasNewUpdate();
+            return hasUpdate != null ? hasUpdate : false;
+        }
+        return false;
+    }
 }
