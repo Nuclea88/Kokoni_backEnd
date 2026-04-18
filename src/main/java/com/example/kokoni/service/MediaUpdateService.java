@@ -9,12 +9,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Service
 @RequiredArgsConstructor
 public class MediaUpdateService {
     private final MangaRepository mangaRepository;
     private final MediaUpdateLogService logService; // Usamos la Interfaz
     private final ScanUpdateParser updateParser;
+
+    private record PendingMessage(String text, String source) {}
+    private final Set<PendingMessage> pendingUpdates = ConcurrentHashMap.newKeySet();
+
+    public void queueExternalUpdate(String rawText, String source) {
+        pendingUpdates.add(new PendingMessage(rawText, source));
+    }
+    @Transactional
+    public synchronized void flushQueuedUpdates() {
+        if (pendingUpdates.isEmpty()) return;
+        
+        Set<PendingMessage> snapshot = new HashSet<>(pendingUpdates);
+        pendingUpdates.clear();
+        for (PendingMessage msg : snapshot) {
+            // Este es tu método antiguo intacto. ¡Hará el volcado de golpe!
+            this.processExternalUpdate(msg.text(), msg.source());
+        }
+    }
+
+
     @Transactional
     public void processExternalUpdate(String rawText, String source) {
         // 1. Parseamos el texto (Extraer Obra y Capítulo)

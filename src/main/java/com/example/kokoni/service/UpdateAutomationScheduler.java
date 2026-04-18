@@ -13,25 +13,21 @@ import java.time.LocalDateTime;
 public class UpdateAutomationScheduler {
     private final MediaUpdateLogService logService;
     private final MangaRepository mangaRepository;
-    /**
-     * Tarea 1: Limpia logs no vinculados que tengan más de 7 días.
-     * Se ejecuta una vez al día (a las 3 AM).
-     */
-    @Scheduled(cron = "0 0 3 * * ?")
-    public void autoCleanLogs() {
-        log.info("Iniciando limpieza automática de logs de actualizaciones...");
-        logService.cleanOldUnlinkedLogs(7);
-        log.info("Limpieza de logs completada.");
-    }
-    /**
-     * Tarea 2: Quita el flag 'hasNewUpdate' a las series tras 48 horas.
-     * Se ejecuta cada hora para mantener la lista fresca.
-     */
-    @Scheduled(fixedRate = 3600000) // Cada hora
+    private final MediaUpdateService updateService;
+    @Scheduled(cron = "0 0 15,21 * * *")
     @Transactional
-    public void autoResetNewFlags() {
+    public void performBiDailyTasks() {
+        log.info("Despertando NeonTech: Ejecutando tareas bi-diarias (15:00 y 21:00)...");
+        
+        // 1. Limpiar los logs "huérfanos" (Botura de +7 días)
+        logService.cleanOldUnlinkedLogs(12);
+        
+        // 2. Volcar la "Cesta" de Telegram de RAM a la Base de Datos
+        updateService.flushQueuedUpdates();
+        
+        // 3. Limpiar las Chapitas de "NUEVA" que tengan más de 48h
         LocalDateTime threshold = LocalDateTime.now().minusHours(48);
-        log.info("Reseteando flags de 'Novedad' anteriores a: {}", threshold);
         mangaRepository.resetNewUpdateFlags(threshold);
+        log.info("Operaciones terminadas. Database puede volver a dormir.");
     }
 }

@@ -50,7 +50,7 @@ public class TelegramMonitorService {
             }
             if (text != null && !text.isEmpty()) {
                 log.info("Scrap de Grupo detectado: {}", text);
-                updateService.processExternalUpdate(text, "Telegram");
+                updateService.queueExternalUpdate(text, "Telegram");
             }
         });
         // 4. ¡ATENCIÓN!: La autenticación de la consola se pasa DENTRO del build()

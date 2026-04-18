@@ -20,7 +20,7 @@ public class MediaCleanupService {
     private final UserMediaTrackerRepository trackerRepository;
     private final ListItemRepository listItemRepository;
     
-    @Scheduled(cron = "0 9 * * * ?") 
+    @Scheduled(cron = "0 0 15,21 * * *") 
     @Transactional
     public void limpiarMangasHuerfanos() {
         System.out.println("🧹 Iniciando barrido de Mangas Custom sin dueños...");
