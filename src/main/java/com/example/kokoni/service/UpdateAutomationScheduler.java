@@ -14,18 +14,15 @@ public class UpdateAutomationScheduler {
     private final MediaUpdateLogService logService;
     private final MangaRepository mangaRepository;
     private final MediaUpdateService updateService;
-    @Scheduled(cron = "0 0 15,21 * * *")
+    // @Scheduled(cron = "0 0 15,21 * * *")
+   @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void performBiDailyTasks() {
         log.info("Despertando NeonTech: Ejecutando tareas bi-diarias (15:00 y 21:00)...");
         
-        // 1. Limpiar los logs "huérfanos" (Botura de +7 días)
         logService.cleanOldUnlinkedLogs(12);
-        
-        // 2. Volcar la "Cesta" de Telegram de RAM a la Base de Datos
         updateService.flushQueuedUpdates();
         
-        // 3. Limpiar las Chapitas de "NUEVA" que tengan más de 48h
         LocalDateTime threshold = LocalDateTime.now().minusHours(48);
         mangaRepository.resetNewUpdateFlags(threshold);
         log.info("Operaciones terminadas. Database puede volver a dormir.");

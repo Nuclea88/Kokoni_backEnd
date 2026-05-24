@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class MediaUpdateLog {
 
-
-    //REVISAR, HECHO CON PRISAS
+    //REVISAR
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

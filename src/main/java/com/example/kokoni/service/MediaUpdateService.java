@@ -1,6 +1,6 @@
 package com.example.kokoni.service;
 
-//REVISAR, HECHO CON PRISAS
+//REVISAR
 import com.example.kokoni.entity.Manga;
 import com.example.kokoni.repository.MangaRepository;
 import com.example.kokoni.external.ScanUpdateParser;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class MediaUpdateService {
     private final MangaRepository mangaRepository;
-    private final MediaUpdateLogService logService; // Usamos la Interfaz
+    private final MediaUpdateLogService logService; 
     private final ScanUpdateParser updateParser;
 
     private record PendingMessage(String text, String source) {}
@@ -33,22 +33,21 @@ public class MediaUpdateService {
         Set<PendingMessage> snapshot = new HashSet<>(pendingUpdates);
         pendingUpdates.clear();
         for (PendingMessage msg : snapshot) {
-            // Este es tu método antiguo intacto. ¡Hará el volcado de golpe!
+           
             this.processExternalUpdate(msg.text(), msg.source());
         }
     }
 
-
     @Transactional
     public void processExternalUpdate(String rawText, String source) {
-        // 1. Parseamos el texto (Extraer Obra y Capítulo)
+       
         ScanUpdateParser.ParsedData data = updateParser.parse(rawText);
-        // 2. Intentamos buscar la obra en nuestra BBDD
+        if ("N/A".equals(data.chapter())) {
+            return; 
+        }
         Optional<Manga> mangaOpt = findMangaByAnyTitle(data.title());
-        
-        // Obtenemos el ID si se encontró la obra
         Long mediaId = mangaOpt.map(Manga::getId).orElse(null);
-        // 3. Si se encontró, actualizamos los campos de la obra
+      
         if (mangaOpt.isPresent()) {
             Manga manga = mangaOpt.get();
             manga.setHasNewUpdate(true);
@@ -56,17 +55,14 @@ public class MediaUpdateService {
             manga.setUpdateSource(source);
             
             try {
-                // Lógica de actualización de número de capítulos
                 int newCap = Integer.parseInt(data.chapter().split("\\s+|-")[0]);
                 if (manga.getTotalChapters() == null || newCap > manga.getTotalChapters()) {
                     manga.setTotalChapters(newCap);
                 }
             } catch (Exception e) {
-                // No se pudo parsear el número de capítulo, lo ignoramos
             }
             mangaRepository.save(manga);
         }
-        // 4. Guardamos el log (vinculado o pendiente) a través del servicio dedicado
         logService.saveLog(data.title(), data.chapter(), source, mediaId);
     }
     private Optional<Manga> findMangaByAnyTitle(String title) {

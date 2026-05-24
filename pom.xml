@@ -30,7 +30,7 @@
 		<java.version>21</java.version>
 	</properties>
 
-<!-- REVISAR XQ NO LO ENTIENDO MUY BIEN -->
+<!-- REVISAR  -->
 <repositories>
     <repository>
         <id>mchv</id>
@@ -72,12 +72,12 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

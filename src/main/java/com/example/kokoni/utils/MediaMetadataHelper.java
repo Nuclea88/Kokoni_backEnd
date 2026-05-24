@@ -9,7 +9,6 @@ import com.example.kokoni.entity.UserChapterProgress;
 import com.example.kokoni.entity.UserCustomMedia;
 import com.example.kokoni.entity.UserMediaTracker;
 
-
 @Component
 public class MediaMetadataHelper {
 

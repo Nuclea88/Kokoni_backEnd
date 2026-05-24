@@ -57,7 +57,7 @@ public class UserMediaTrackerServiceImplTest {
         when(trackerRepository.existsByUserIdAndMediaId(testUser.getId(), testManga.getId())).thenReturn(false);
         when(trackerRepository.save(any(UserMediaTracker.class))).thenReturn(expectedTracker);
         
-        TrackerItemResponse mockResponse = new TrackerItemResponse(500L, 100L, "Berserk", "url.jpg", "RELEASING", "PLANNING", 0, 364, 0.0, null);
+        TrackerItemResponse mockResponse = new TrackerItemResponse(500L, 100L, "Berserk", "url.jpg", "RELEASING", "PLANNING", 0, 364, 0.0, null, false);
         when(trackerMapper.toTrackerItemResponse(expectedTracker)).thenReturn(mockResponse);
         // Act
         TrackerItemResponse result = trackerService.addTracker(addRequest);
