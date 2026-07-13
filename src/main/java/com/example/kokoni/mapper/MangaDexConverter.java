@@ -39,11 +39,11 @@ public class MangaDexConverter {
                 .orElse(null);
     }
 
-    @Named("mapDescription")
-    public String mapDescription(Map<String, String> desc) {
-        if (desc == null) return "Sin descripción";
-        return desc.getOrDefault("es", desc.getOrDefault("en", "Sin descripción"));
-    }
+    // @Named("mapDescription")
+    // public String mapDescription(Map<String, String> desc) {
+    //     if (desc == null) return "Sin descripción";
+    //     return desc.getOrDefault("es", desc.getOrDefault("en", "Sin descripción"));
+    // }
 
     @Named("parseSafeInt")
     public Integer parseSafeInt(String value) {

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -46,8 +50,9 @@ public class Media {
     @Column(nullable = false)
     private String provider; 
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> description = new HashMap<>();
 
     @Column(name = "release_date")
     private LocalDate releaseDate;

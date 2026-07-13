@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -47,7 +49,7 @@ public class MangaControllerTest {
         // Arrange
         MangaDetailResponse mockDetail = new MangaDetailResponse(
             1L, "Berserk", "Kentaro Miura", "url.jpg", 9.5, 1, 1000, "RELEASING", 
-            "Guts is a wanderer...", List.of("Action"), 364, 0, false, null, "Nuclea", List.of()
+            Map.of("es", "Aquí tienes un string de descripción"), List.of("Action"), 364, 0, false, null, "Nuclea", List.of()
         );
         when(mangaService.getMangaDetails("ext-123")).thenReturn(mockDetail);
         // Act & Assert
