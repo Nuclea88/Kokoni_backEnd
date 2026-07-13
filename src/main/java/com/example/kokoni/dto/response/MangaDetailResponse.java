@@ -1,6 +1,7 @@
 package com.example.kokoni.dto.response;
 
 import java.util.List;
+import java.util.Map;
 
 public record MangaDetailResponse(
     
@@ -12,7 +13,7 @@ public record MangaDetailResponse(
     Integer rankPosition, 
     Integer readersCount, 
     String status, 
-    String description,
+    Map<String, String> description,
     List<String> genres,
     Integer totalChapters,
     Integer currentChapter,

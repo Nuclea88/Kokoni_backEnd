@@ -27,8 +27,10 @@ public interface UserCustomMediaMapper {
     @Mapping(target = "currentChapter", source = "currentChapter")
     UserCustomMediaDTOResponse toResponse(UserCustomMedia custom, Boolean isAddedInTracker, Long trackerId, List<ChapterProgressResponse> readChapters, Integer currentChapter, String userStatus);
 
+    @Mapping(target = "description", ignore = true)
     UserCustomMedia toEntity(UserCustomMediaDTORequest request);
 
     // @Mapping(target = "baseManga.id", source = "baseMangaId")
+    @Mapping(target = "description", ignore = true)
     void updateEntity(UserCustomMediaDTORequest request, @MappingTarget UserCustomMedia entity);
 }

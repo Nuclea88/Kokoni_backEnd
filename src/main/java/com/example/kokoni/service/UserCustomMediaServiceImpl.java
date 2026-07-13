@@ -2,6 +2,7 @@ package com.example.kokoni.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,7 @@ public class UserCustomMediaServiceImpl implements UserCustomMediaService {
             Manga base = mangaService.findById(request.baseMangaId());
             custom.setBaseManga(base);
             custom.setImageUrl(request.imageUrl() != null ? request.imageUrl() : base.getImageUrl());
-            custom.setDescription(request.description() != null ? request.description() : base.getDescription());
+            custom.setDescription(request.description() != null && !request.description().isBlank() ? Map.of("es", request.description()) : base.getDescription());
 
             
 
@@ -149,7 +150,7 @@ public class UserCustomMediaServiceImpl implements UserCustomMediaService {
         UserCustomMedia media = getCustomMediaOwnedByMeOrThrow(id);
         User me = authService.getAuthenticatedUser();
 
-        if ((media.getDescription() == null || media.getDescription().isBlank()) && media.getBaseManga() != null) {
+        if ((media.getDescription() == null || media.getDescription().isEmpty()) && media.getBaseManga() != null) {
             media.setDescription(media.getBaseManga().getDescription());
         }
         if ((media.getImageUrl() == null || media.getImageUrl().isBlank()) && media.getBaseManga() != null) {
@@ -192,8 +193,8 @@ public class UserCustomMediaServiceImpl implements UserCustomMediaService {
             existing.setCustomTotalChapters(request.customTotalChapters());
         if (request.customAuthor() != null)
             existing.setCustomAuthor(request.customAuthor());
-        if (request.description() != null)
-            existing.setDescription(request.description());
+        if (request.description() != null && !request.description().isBlank())
+            existing.setDescription(Map.of("es", request.description()));
         if (request.imageUrl() != null)
             existing.setImageUrl(request.imageUrl());
 

@@ -23,7 +23,7 @@ public interface MangaDexMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "externalId", source = "id")
     @Mapping(target = "provider", constant = "MANGADEX")
-    @Mapping(target = "description", source = "attributes.description", qualifiedByName = "mapDescription")
+    @Mapping(target = "description", source = "attributes.description")
     @Mapping(target = "releaseDate", source = "attributes.year")
     @Mapping(target = "status", source = "attributes.status")
     @Mapping(target = "author", source = "relationships", qualifiedByName = "extractAuthor")

@@ -1,6 +1,7 @@
 package com.example.kokoni.dto.response;
 
 import java.util.List;
+import java.util.Map;
 
 public record UserCustomMediaDTOResponse(
         Long id,
@@ -9,7 +10,7 @@ public record UserCustomMediaDTOResponse(
         String customAuthor,
         Integer customTotalChapters,
         String customStatus,
-        String description,
+        Map<String, String> description,
         Boolean isAddedInTracker,
         Long trackerId,
         String userStatus,
