@@ -74,10 +74,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private String calculateRank(int level) {
-        if (level >= 46) return "KAGE";
-        if (level >= 31) return "CLASE S";
-        if (level >= 21) return "SHINOBI";
-        if (level >= 11) return "NOVAT@";
+        if (level <= 46) return "KAGE";
+        if (level <= 31) return "CLASE S";
+        if (level <= 21) return "SHINOBI";
+        if (level <= 11) return "NOVAT@";
         return "KAMI SAMA";
     }
     private int calculateStreak(Long userId) {
